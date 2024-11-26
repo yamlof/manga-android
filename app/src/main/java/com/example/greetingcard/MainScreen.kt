@@ -1,6 +1,8 @@
 package com.example.greetingcard
 
 import android.app.Notification
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -19,6 +21,7 @@ import com.example.greetingcard.pages.HomePage
 import com.example.greetingcard.pages.NotificationPage
 import com.example.greetingcard.pages.SettingsPage
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
 
@@ -67,6 +70,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
     
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ContentScreen(modifier: Modifier = Modifier,selectedIndex:Int) {
     when(selectedIndex){

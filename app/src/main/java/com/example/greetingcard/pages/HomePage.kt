@@ -4,14 +4,17 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -23,41 +26,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.greetingcard.R
-import java.time.format.TextStyle
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.fillMaxSize()
-            .background(Color(0xFF01034F)),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(16.dp)
     ) {
-        Text(
-            text = "Home Page",
-            fontSize = 40.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White
-        )
 
-        val painter = painterResource(id = R.drawable.shadow)
-        val description = "Sunny"
-        val title = "Shadow Slave"
-        Box(modifier = Modifier
-            .fillMaxWidth(0.5f)
-            .padding(16.dp)
-        ){
-            ImageCard(
-                painter = painter,
-                contentDescription = description,
-                title = title
-            )
+
+        items(20) {
+            Box(modifier = Modifier
+                //.fillMaxWidth(0.5f)
+                .padding(5.dp)
+            ){
+                val painter = painterResource(id = R.drawable.shadow)
+                val description = "Sunny"
+                val title = "Shadow Slave"
+                ImageCard(
+                    painter = painter,
+                    contentDescription = description,
+                    title = title
+                )
+
+            }
         }
+
+
 
     }
 
@@ -72,10 +71,15 @@ fun ImageCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable {
+
+            },
+            //.size(300.dp,100.dp),
         shape = RoundedCornerShape(15.dp),
     ){
-        Box(modifier = Modifier.height(200.dp)) {
+        Box(modifier = Modifier.height(300.dp)) {
             Image(
                 painter = painter,
                 contentDescription = contentDescription,
@@ -107,3 +111,34 @@ fun ImageCard(
         }
     }
 }
+
+/*@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun HomePage(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth()
+            .background(Color(0xFF01034F)),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Start
+    ) {
+        val painter = painterResource(id = R.drawable.shadow)
+        val description = "Sunny"
+        val title = "Shadow Slave"
+
+
+        Box(modifier = Modifier
+            .fillMaxWidth(0.5f)
+            .padding(5.dp)
+        ){
+            ImageCard(
+                painter = painter,
+                contentDescription = description,
+                title = title
+            )
+
+        }
+
+    }
+
+
+}*/
