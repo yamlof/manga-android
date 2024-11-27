@@ -10,7 +10,7 @@ object RetrofitClient {
     private val client = OkHttpClient.Builder().build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://6828-194-66-243-8.ngrok-free.app") // Replace with your backend URL if deployed
+        .baseUrl("https://395e-194-66-243-12.ngrok-free.app") // Replace with your backend URL if deployed
         .addConverterFactory(GsonConverterFactory.create())
         .client(client)
         .build()
@@ -22,5 +22,8 @@ object RetrofitClient {
 interface ApiService {
     @GET("hello")
     suspend fun getHelloMessage(): String
+
+    @GET("latest")
+    suspend fun getLatest(): List<Map<String,String>>
 }
 

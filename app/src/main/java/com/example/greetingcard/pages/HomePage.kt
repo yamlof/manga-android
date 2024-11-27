@@ -68,7 +68,8 @@ fun ImageCard(
     painter: Painter,
     contentDescription: String,
     title:String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop
 ) {
     Card(
         modifier = modifier
@@ -83,7 +84,8 @@ fun ImageCard(
             Image(
                 painter = painter,
                 contentDescription = contentDescription,
-                contentScale = ContentScale.Crop
+                contentScale = contentScale,
+                modifier = Modifier.fillMaxSize()
             )
             Box(modifier = Modifier
                 .fillMaxSize()
