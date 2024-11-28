@@ -1,5 +1,6 @@
 package com.example.greetingcard.requests
 
+import com.example.greetingcard.pages.ApiResponse
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -24,6 +25,6 @@ interface ApiService {
     suspend fun getHelloMessage(): String
 
     @GET("latest")
-    suspend fun getLatest(): List<Map<String,String>>
+    suspend fun getLatest(): List<ApiResponse>
 }
 

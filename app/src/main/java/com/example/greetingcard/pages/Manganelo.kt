@@ -19,24 +19,34 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.example.greetingcard.R
 import com.example.greetingcard.requests.RetrofitClient
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 data class ApiResponse(
-    val imageUrl:String,
-    val title:String
+    val cover:String,
+    val title:String,
+    val manga_url : String
 )
 
 
 @OptIn(ExperimentalCoilApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MangaNelo(modifier: Modifier = Modifier) {
+fun MangaNelo(
+    modifier: Modifier = Modifier,
+    navController: NavHostController
+) {
 
-    val itemsList = remember { mutableStateOf<List<Map<String,String>>>(emptyList()) }
+    val itemsList = remember { mutableStateOf<List<ApiResponse>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         try {
@@ -58,9 +68,10 @@ fun MangaNelo(modifier: Modifier = Modifier) {
 
         items(itemsList.value) { item ->
 
-            val imageUrl = item["cover"] ?: ""
-            val title = item["title"] ?: "unkwnown"
+            val imageUrl = item.cover
+            val title = item.title
             val description = "sunny"
+            val mangaUrl = item.manga_url
 
             val imageRequest = ImageRequest.Builder(LocalContext.current)
                 .data(imageUrl)
@@ -78,6 +89,9 @@ fun MangaNelo(modifier: Modifier = Modifier) {
                 .build()
 
             val painter = rememberImagePainter(imageRequest)
+            val encodedMangaUrl = URLEncoder.encode(mangaUrl, StandardCharsets.UTF_8.toString())
+
+            //val navController = rememberNavController()
 
             Box(modifier = Modifier
                 //.fillMaxWidth(0.5f)
@@ -89,7 +103,11 @@ fun MangaNelo(modifier: Modifier = Modifier) {
                     painter = painter,
                     contentDescription = description,
                     title = title,
-                    contentScale = ContentScale.FillBounds
+                    contentScale = ContentScale.FillBounds,
+                    onClick = {
+                        navController.navigate("itemDetail/${encodedMangaUrl}")
+                    }
+
                 )
             }
         }

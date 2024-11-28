@@ -1,5 +1,7 @@
 package com.example.greetingcard.pages
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.greetingcard.requests.RetrofitClient
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NotificationPage(modifier: Modifier = Modifier) {
 
@@ -66,8 +69,16 @@ fun NotificationPage(modifier: Modifier = Modifier) {
                 }
             }
         }
-        composable("detail/{source}") {
-            MangaNelo()
+        composable("detail/{source}") { navBackStackEntry ->
+            val source = navBackStackEntry.arguments?.getString("source")
+            MangaNelo(navController =navController)
+        }
+
+        composable("itemDetail/{manga_url}"){ navBackStackEntry ->
+            val itemName = navBackStackEntry.arguments?.getString("manga_url")
+            if (itemName != null) {
+                ItemDetail(chapterId = itemName)
+            }
         }
 
     }
