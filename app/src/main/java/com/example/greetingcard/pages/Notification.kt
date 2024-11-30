@@ -77,7 +77,7 @@ fun NotificationPage(modifier: Modifier = Modifier) {
         composable("itemDetail/{manga_url}"){ navBackStackEntry ->
             val itemName = navBackStackEntry.arguments?.getString("manga_url")
             if (itemName != null) {
-                ItemDetail(chapterId = itemName)
+                ItemDetail(mangaJson = itemName)
             }
         }
 

@@ -46,12 +46,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.greetingcard.R
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
-    Column {
+    Column (
+        modifier = Modifier
+            .padding(bottom = 75.dp)
+    ){
         OutlinedCard(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -60,7 +63,8 @@ fun HomePage(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .height( height = 280.dp)
                 .fillMaxWidth()
-                .padding(top = 25.dp)
+                .padding(top = 25.dp),
+            shape = RectangleShape
         ) {
             val painter = painterResource(id = R.drawable.shadow)
             val description = "Sunny"
@@ -71,14 +75,15 @@ fun HomePage(modifier: Modifier = Modifier) {
                     .padding(5.dp)
                     .width(250.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                //horizontalArrangement = Arrangement.End
             ){
                 ImageCard(
                     painter = painter,
                     modifier = Modifier
                         .fillMaxHeight()
                         .height(25.dp)
-                        .size(height = 20.dp, width = 120.dp),
+                        .size(height = 20.dp, width = 120.dp)
+                        .padding(),
                     contentDescription = description,
                     contentScale = ContentScale.FillBounds,
                     title = title,
@@ -87,7 +92,7 @@ fun HomePage(modifier: Modifier = Modifier) {
 
                 Column (
                     modifier = Modifier
-                        .background(Color.White),
+                        .background(Color.Yellow),
                     horizontalAlignment = Alignment.End
                 ) {
                     Text(
@@ -105,8 +110,12 @@ fun HomePage(modifier: Modifier = Modifier) {
                         textAlign = TextAlign.End,
                         color = Color.Black
                     )
-                    ElevatedButton(onClick = {}) {
-                        Text("Add to Library")
+                    ElevatedButton(
+                        onClick = {},
+                    ) {
+                        Text(
+                            "Add to Library",
+                            textAlign = TextAlign.End)
                     }
                 }
 
@@ -117,17 +126,6 @@ fun HomePage(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
         ){
-            // Add a single item
-            item {
-                Card (
-                    colors = CardDefaults.cardColors(Color.Red),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp)
-                ){
-                    Text(text = "First item")
-                }
-            }
 
             // Add 5 items
             items(70) { index ->

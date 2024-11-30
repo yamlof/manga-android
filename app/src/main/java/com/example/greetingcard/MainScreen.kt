@@ -35,7 +35,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
         mutableIntStateOf(0)
     }
 
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {

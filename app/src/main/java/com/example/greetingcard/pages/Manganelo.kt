@@ -27,7 +27,9 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.example.greetingcard.R
+import com.example.greetingcard.items.Manga
 import com.example.greetingcard.requests.RetrofitClient
+import com.google.gson.Gson
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -57,13 +59,13 @@ fun MangaNelo(
         } catch (e:Exception) {
             Log.d("MangaNelo", "Error Fetched items: $e.message")  //
         }
-
-
     }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp)
+        contentPadding = PaddingValues(16.dp),
+        modifier = Modifier
+            .padding(bottom = 90.dp)
     ) {
 
         items(itemsList.value) { item ->
@@ -98,6 +100,10 @@ fun MangaNelo(
                 .padding(5.dp)
 
             ){
+
+                val manga = Manga(title, cover = imageUrl, mangaUrl = mangaUrl)
+                val gson = Gson()
+                val mangaJson = gson.toJson(manga)
 
                 ImageCard(
                     painter = painter,

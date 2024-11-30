@@ -61,6 +61,8 @@ dependencies {
 
 }
 dependencies {
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.common)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.retrofit.v290)
     implementation(libs.converter.gson)
