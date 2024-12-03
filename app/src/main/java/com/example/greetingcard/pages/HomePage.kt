@@ -62,8 +62,9 @@ fun HomePage(modifier: Modifier = Modifier) {
             border = BorderStroke(1.dp, Color.Black),
             modifier = Modifier
                 .height( height = 280.dp)
-                .fillMaxWidth()
-                .padding(top = 25.dp),
+                .padding(top = 25.dp)
+                //.width(400.dp),
+                .fillMaxWidth(),
             shape = RectangleShape
         ) {
             val painter = painterResource(id = R.drawable.shadow)
@@ -72,28 +73,38 @@ fun HomePage(modifier: Modifier = Modifier) {
             Row (
                 modifier = modifier
                     .height(600.dp)
-                    .padding(5.dp)
-                    .width(250.dp),
+                    .fillMaxWidth()
+                    .padding(5.dp),
+
+                //fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                //horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.SpaceAround
             ){
-                ImageCard(
-                    painter = painter,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .height(25.dp)
-                        .size(height = 20.dp, width = 120.dp)
-                        .padding(),
-                    contentDescription = description,
-                    contentScale = ContentScale.FillBounds,
-                    title = title,
-                    onClick = {}
-                )
+
+                    ImageCard(
+                        painter = painter,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .height(25.dp)
+                            .size(height = 20.dp, width = 120.dp)
+                            .padding(top = 20.dp, bottom = 20.dp),
+                        contentDescription = description,
+                        contentScale = ContentScale.FillBounds,
+                        title = title,
+                        onClick = {}
+                    )
+
+
 
                 Column (
                     modifier = Modifier
-                        .background(Color.Yellow),
-                    horizontalAlignment = Alignment.End
+                        .background(Color.White)
+                        .fillMaxHeight()
+                        //.fillMaxWidth()
+                        //.width(100.dp)
+                        .padding(start = 0.dp),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = "Shadow Slave",
@@ -112,6 +123,8 @@ fun HomePage(modifier: Modifier = Modifier) {
                     )
                     ElevatedButton(
                         onClick = {},
+                        modifier = Modifier
+                            .padding(top = 25.dp)
                     ) {
                         Text(
                             "Add to Library",
@@ -135,7 +148,7 @@ fun HomePage(modifier: Modifier = Modifier) {
                         .fillMaxWidth()
                         .height(60.dp),
                     shape = RectangleShape,
-                    colors = CardDefaults.cardColors(Color.Blue)
+                    colors = CardDefaults.cardColors(Color(0xFFA4C2D7))
                 ) {
                     Text(text = "Item: $index")
 

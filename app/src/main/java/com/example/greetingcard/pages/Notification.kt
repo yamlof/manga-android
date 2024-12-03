@@ -60,6 +60,9 @@ fun NotificationPage(modifier: Modifier = Modifier) {
                         text = "Manganelo",
                         modifier = Modifier
                             .clickable {
+
+                                notificationText = ""
+
                                 navController.navigate("detail/Manganelo")
                             }
                         /*fontSize = 40.sp,

@@ -2,8 +2,9 @@ package com.example.greetingcard.requests
 
 import androidx.room.Query
 import com.example.greetingcard.items.Manga
-import com.example.greetingcard.pages.ApiResponse
-import com.example.greetingcard.pages.MangaInfo
+import com.example.greetingcard.models.LatestManga
+import com.example.greetingcard.models.MangaInfo
+
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -28,11 +29,16 @@ interface ApiService {
     suspend fun getHelloMessage(): String
 
     @GET("latest")
-    suspend fun getLatest(): List<ApiResponse>
+    suspend fun getLatest(): List<LatestManga>
 
     @GET("manga_info")
     suspend fun  getMangaInfo(
         @retrofit2.http.Query("mangaInfo") url :String
     ) : MangaInfo
+
+    @GET("chapterInfo")
+    suspend fun getChapterInfo(
+        @retrofit2.http.Query("chapter") url :String
+    )
 }
 

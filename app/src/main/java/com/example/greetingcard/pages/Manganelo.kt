@@ -28,16 +28,12 @@ import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.example.greetingcard.R
 import com.example.greetingcard.items.Manga
+import com.example.greetingcard.models.LatestManga
 import com.example.greetingcard.requests.RetrofitClient
 import com.google.gson.Gson
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-data class ApiResponse(
-    val cover:String,
-    val title:String,
-    val manga_url : String
-)
 
 
 @OptIn(ExperimentalCoilApi::class)
@@ -48,7 +44,7 @@ fun MangaNelo(
     navController: NavHostController
 ) {
 
-    val itemsList = remember { mutableStateOf<List<ApiResponse>>(emptyList()) }
+    val itemsList = remember { mutableStateOf<List<LatestManga>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         try {
