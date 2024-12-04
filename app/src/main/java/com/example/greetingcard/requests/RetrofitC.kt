@@ -2,6 +2,8 @@ package com.example.greetingcard.requests
 
 import androidx.room.Query
 import com.example.greetingcard.items.Manga
+
+import com.example.greetingcard.models.ImageManga
 import com.example.greetingcard.models.LatestManga
 import com.example.greetingcard.models.MangaInfo
 
@@ -36,9 +38,9 @@ interface ApiService {
         @retrofit2.http.Query("mangaInfo") url :String
     ) : MangaInfo
 
-    @GET("chapterInfo")
+    @GET("chapter")
     suspend fun getChapterInfo(
-        @retrofit2.http.Query("chapter") url :String
-    )
+        @retrofit2.http.Query("chapterUrl") url :String
+    ) : List<ImageManga>
 }
 

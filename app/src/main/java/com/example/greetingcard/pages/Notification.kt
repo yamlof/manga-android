@@ -21,9 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.greetingcard.models.Chapter
 import com.example.greetingcard.requests.RetrofitClient
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -80,7 +82,14 @@ fun NotificationPage(modifier: Modifier = Modifier) {
         composable("itemDetail/{manga_url}"){ navBackStackEntry ->
             val itemName = navBackStackEntry.arguments?.getString("manga_url")
             if (itemName != null) {
-                ItemDetail(mangaJson = itemName)
+                ItemDetail(mangaJson = itemName, navController = navController)
+            }
+        }
+
+        composable("chapter/{chapterUrl}") { navBackStackEntry ->
+            val chapterName = navBackStackEntry.arguments?.getString("chapterUrl")
+            if (chapterName != null) {
+                ChapterReader(chapterUrl = chapterName, navController = navController)
             }
         }
 

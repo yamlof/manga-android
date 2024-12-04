@@ -45,123 +45,151 @@ import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.greetingcard.R
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
-    Column (
-        modifier = Modifier
-            .padding(bottom = 75.dp)
-    ){
-        OutlinedCard(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            border = BorderStroke(1.dp, Color.Black),
-            modifier = Modifier
-                .height( height = 280.dp)
-                .padding(top = 25.dp)
-                //.width(400.dp),
-                .fillMaxWidth(),
-            shape = RectangleShape
-        ) {
-            val painter = painterResource(id = R.drawable.shadow)
-            val description = "Sunny"
-            val title = "Shadow Slave"
-            Row (
-                modifier = modifier
-                    .height(600.dp)
-                    .fillMaxWidth()
-                    .padding(5.dp),
 
-                //fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = "library"){
+        composable("library") {
+            Column (
+                modifier = Modifier
+                    .padding(bottom = 75.dp)
             ){
 
-                    ImageCard(
-                        painter = painter,
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .height(25.dp)
-                            .size(height = 20.dp, width = 120.dp)
-                            .padding(top = 20.dp, bottom = 20.dp),
-                        contentDescription = description,
-                        contentScale = ContentScale.FillBounds,
-                        title = title,
-                        onClick = {}
-                    )
 
 
-
-                Column (
+                OutlinedCard(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ),
+                    border = BorderStroke(1.dp, Color.Black),
                     modifier = Modifier
-                        .background(Color.White)
-                        .fillMaxHeight()
-                        //.fillMaxWidth()
-                        //.width(100.dp)
-                        .padding(start = 0.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Center
+                        .height( height = 280.dp)
+                        .padding(top = 25.dp)
+                        //.width(400.dp),
+                        .fillMaxWidth(),
+                    shape = RectangleShape
                 ) {
-                    Text(
-                        text = "Shadow Slave",
-                        textAlign = TextAlign.Center,
-                        color = Color.Black
-                    )
-                    Text(
-                        text = "Guiltythree",
-                        textAlign = TextAlign.End,
-                        color = Color.Black
-                    )
-                    Text(
-                        text = "Ongoing",
-                        textAlign = TextAlign.End,
-                        color = Color.Black
-                    )
-                    ElevatedButton(
-                        onClick = {},
-                        modifier = Modifier
-                            .padding(top = 25.dp)
-                    ) {
-                        Text(
-                            "Add to Library",
-                            textAlign = TextAlign.End)
+                    val painter = painterResource(id = R.drawable.shadow)
+                    val description = "Sunny"
+                    val title = "Shadow Slave"
+                    Row (
+                        modifier = modifier
+                            .height(600.dp)
+                            .fillMaxWidth()
+                            .padding(5.dp),
+
+                        //fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceAround
+                    ){
+
+                        ImageCard(
+                            painter = painter,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .height(25.dp)
+                                .size(height = 20.dp, width = 120.dp)
+                                .padding(top = 20.dp, bottom = 20.dp),
+                            contentDescription = description,
+                            contentScale = ContentScale.FillBounds,
+                            title = title,
+                            onClick = {}
+                        )
+
+
+
+                        Column (
+                            modifier = Modifier
+                                .background(Color.White)
+                                .fillMaxHeight()
+                                //.fillMaxWidth()
+                                //.width(100.dp)
+                                .padding(start = 0.dp),
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Shadow Slave",
+                                textAlign = TextAlign.Center,
+                                color = Color.Black
+                            )
+                            Text(
+                                text = "Guiltythree",
+                                textAlign = TextAlign.End,
+                                color = Color.Black
+                            )
+                            Text(
+                                text = "Ongoing",
+                                textAlign = TextAlign.End,
+                                color = Color.Black
+                            )
+                            ElevatedButton(
+                                onClick = {},
+                                modifier = Modifier
+                                    .padding(top = 25.dp)
+                            ) {
+                                Text(
+                                    "Add to Library",
+                                    textAlign = TextAlign.End)
+                            }
+                        }
+
                     }
+
                 }
-
-            }
-
-        }
-        LazyColumn (
-            modifier = Modifier
-                .fillMaxWidth()
-        ){
-
-            // Add 5 items
-            items(70) { index ->
-
-                Card(
+                LazyColumn (
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(60.dp),
-                    shape = RectangleShape,
-                    colors = CardDefaults.cardColors(Color(0xFFA4C2D7))
-                ) {
-                    Text(text = "Item: $index")
+                ){
 
+                    // Add 5 items
+                    items(5) { index ->
+
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(60.dp),
+                            shape = RectangleShape,
+                            colors = CardDefaults.cardColors(Color(0xFFA4C2D7))
+                        ) {
+                            Text(text = "Item: $index")
+
+                        }
+
+                    }
+
+
+
+                    // Add another single item
+                    item {
+                        Text(text = "Last item",
+                            modifier = Modifier
+                                .clickable {
+                                    navController.navigate("chapter")
+
+                                }
+                        )
+
+                    }
                 }
-
-            }
-
-            // Add another single item
-            item {
-                Text(text = "Last item")
             }
         }
+
+        composable("chapter") {
+            //ChapterReader(chapterUrl = "https://chapmanganelo.com/manga-qq130784/chapter-17")
+        }
     }
+
+
 
 }
 

@@ -1,10 +1,12 @@
 package com.example.greetingcard.pages
 
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.room.util.query
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
@@ -60,6 +63,7 @@ import java.nio.charset.StandardCharsets
 fun ItemDetail(
     modifier: Modifier = Modifier,
     mangaJson:String,
+    navController: NavController
 ) {
     //val mangaInfo = manga.mangaUrl
     val itemsList = remember { mutableStateOf<List<LatestManga>>(emptyList()) }
@@ -189,11 +193,18 @@ fun ItemDetail(
             items(fetchedChapters.value) { item ->
 
                 val chapterName = item.chapterTitle
+                val chapterLink = item.chapterLink
+
+                val encodedChapterUrl = Uri.encode(chapterLink)
+
 
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(60.dp),
+                        .height(60.dp)
+                        .clickable {
+                            navController.navigate("chapter/$encodedChapterUrl")
+                        },
                     shape = RectangleShape,
                     colors = CardDefaults.cardColors(Color(0xFFA4C2D7)),
                 ) {
