@@ -27,7 +27,7 @@
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Add Popular bar to source
+- [x] Add Popular bar to source
 - [ ] Add Search bar to source
 
 See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
