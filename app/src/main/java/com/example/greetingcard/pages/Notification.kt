@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
@@ -21,12 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.greetingcard.models.Chapter
 import com.example.greetingcard.requests.RetrofitClient
+import com.example.greetingcard.sources.manganelo.ChapterReader
+import com.example.greetingcard.sources.manganelo.ItemDetail
+import com.example.greetingcard.sources.manganelo.MangaNelo
+import com.example.greetingcard.sources.manganelo.MangaNeloPopular
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -92,6 +93,7 @@ fun NotificationPage(modifier: Modifier = Modifier) {
                 ChapterReader(chapterUrl = chapterName, navController = navController)
             }
         }
+
 
     }
 
