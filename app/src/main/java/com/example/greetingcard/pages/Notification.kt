@@ -20,9 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.greetingcard.database.MangaViewModel
 import com.example.greetingcard.requests.RetrofitClient
 import com.example.greetingcard.sources.manganelo.ChapterReader
 import com.example.greetingcard.sources.manganelo.ItemDetail
@@ -32,6 +34,9 @@ import com.example.greetingcard.sources.manganelo.MangaNeloPopular
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NotificationPage(modifier: Modifier = Modifier) {
+
+    val mangaViewModel: MangaViewModel = viewModel()
+
 
     var notificationText by remember { mutableStateOf("Loading...") }
 
@@ -83,7 +88,7 @@ fun NotificationPage(modifier: Modifier = Modifier) {
         composable("itemDetail/{manga_url}"){ navBackStackEntry ->
             val itemName = navBackStackEntry.arguments?.getString("manga_url")
             if (itemName != null) {
-                ItemDetail(mangaJson = itemName, navController = navController)
+                ItemDetail(mangaJson = itemName, navController = navController, viewModel = mangaViewModel)
             }
         }
 

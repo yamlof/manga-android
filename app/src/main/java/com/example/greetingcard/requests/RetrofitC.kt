@@ -1,18 +1,13 @@
 package com.example.greetingcard.requests
 
-import androidx.room.Query
-import com.example.greetingcard.items.Manga
-
 import com.example.greetingcard.models.ImageManga
 import com.example.greetingcard.models.LatestManga
 import com.example.greetingcard.models.MangaInfo
-import com.example.greetingcard.sources.manganelo.SearchCard
 
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Url
 
 
 object RetrofitClient {

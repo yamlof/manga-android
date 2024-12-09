@@ -17,13 +17,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.greetingcard.database.MangaViewModel
 import com.example.greetingcard.pages.HomePage
 import com.example.greetingcard.pages.NotificationPage
 import com.example.greetingcard.pages.SettingsPage
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
 
     val navItemList = listOf(
         NavItem("Home", Icons.Default.Home,0),
@@ -63,17 +65,21 @@ fun MainScreen(modifier: Modifier = Modifier) {
             }
         }
     ) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding),selectedIndex)
+        ContentScreen(modifier = Modifier.padding(innerPadding),selectedIndex, mangaViewModel = mangaViewModel)
 
     }
     
 }
 
+
+
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier,selectedIndex:Int) {
+fun ContentScreen(modifier: Modifier = Modifier,selectedIndex:Int,mangaViewModel: MangaViewModel) {
     when(selectedIndex){
-        0 -> HomePage()
+
+        0 -> HomePage(mangaViewModel = mangaViewModel)
         1 -> NotificationPage()
         2 -> SettingsPage()
     }

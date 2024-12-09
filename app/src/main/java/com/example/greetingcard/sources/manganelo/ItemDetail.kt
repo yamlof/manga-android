@@ -39,6 +39,8 @@ import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
+import com.example.greetingcard.database.Manga
+import com.example.greetingcard.database.MangaViewModel
 import com.example.greetingcard.models.Chapter
 import com.example.greetingcard.models.LatestManga
 import com.example.greetingcard.pages.ImageCard
@@ -51,7 +53,8 @@ import com.example.greetingcard.requests.RetrofitClient
 fun ItemDetail(
     modifier: Modifier = Modifier,
     mangaJson:String,
-    navController: NavController
+    navController: NavController,
+    viewModel: MangaViewModel
 ) {
     //val mangaInfo = manga.mangaUrl
     val itemsList = remember { mutableStateOf<List<LatestManga>>(emptyList()) }
@@ -157,8 +160,17 @@ fun ItemDetail(
                         textAlign = TextAlign.End,
                         color = Color.Black
                     )
+
+                    val newManga = Manga(
+                        name =fetcheditem.value ?: "Not Found Yet",
+                        cover = cover ?: "Not Found Yet",
+                        mangaUrl = mangaJson
+                    )
+
                     ElevatedButton(
-                        onClick = {},
+                        onClick = {
+                            viewModel.addManga(newManga)
+                        },
                         modifier = Modifier
                             .padding(top = 25.dp)
                     ) {

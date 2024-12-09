@@ -1,184 +1,123 @@
 package com.example.greetingcard.pages
 
+import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.greetingcard.R
-import com.example.greetingcard.sources.manganelo.ChapterReader
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
+import com.example.greetingcard.database.MangaViewModel
+import com.example.greetingcard.database.MangaViewModelFactory
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomePage(modifier: Modifier = Modifier) {
+fun HomePage(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
 
     val navController = rememberNavController()
+
+
+
 
     NavHost(navController = navController, startDestination = "library"){
         composable("library") {
             Column (
                 modifier = Modifier
-                    .padding(bottom = 75.dp)
+                    .padding(bottom = 75.dp, top = 25.dp)
             ){
+                Row (modifier = modifier
+                    .fillMaxWidth()
+                    .background(Color.Yellow),
+                ){
+                    Text(
+                        text = "Library",
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Black
+                    )
+                }
 
 
+                val allMangas by mangaViewModel.getAllMangas().observeAsState(emptyList())
 
-                OutlinedCard(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                    ),
-                    border = BorderStroke(1.dp, Color.Black),
+                val mangas = ""
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(16.dp),
                     modifier = Modifier
-                        .height( height = 280.dp)
-                        .padding(top = 25.dp)
-                        //.width(400.dp),
-                        .fillMaxWidth(),
-                    shape = RectangleShape
+                        .padding(bottom = 90.dp)
                 ) {
-                    val painter = painterResource(id = R.drawable.shadow)
-                    val description = "Sunny"
-                    val title = "Shadow Slave"
-                    Row (
-                        modifier = modifier
-                            .height(600.dp)
-                            .fillMaxWidth()
-                            .padding(5.dp),
+                    items(allMangas) { manga ->
 
-                        //fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ){
+                        val imageRequest = ImageRequest.Builder(LocalContext.current)
+                            .data(manga.cover)
+                            .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0")
+                            .addHeader("Accept", "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5")
+                            .addHeader("Accept-Language", "en-GB,en;q=0.5")
+                            .addHeader("Connection", "keep-alive")
+                            .addHeader("Referer", "https://chapmanganelo.com/")
+                            .addHeader("Sec-Fetch-Dest", "image")
+                            .addHeader("Sec-Fetch-Mode", "no-cors")
+                            .addHeader("Sec-Fetch-Site", "cross-site")
+                            .addHeader("Priority", "u=5, i")
+                            .addHeader("Pragma", "no-cache")
+                            .addHeader("Cache-Control", "no-cache")
+                            .build()
+
+                        val painter = rememberImagePainter(imageRequest)
+
+
 
                         ImageCard(
                             painter = painter,
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .height(25.dp)
-                                .size(height = 20.dp, width = 120.dp)
-                                .padding(top = 20.dp, bottom = 20.dp),
-                            contentDescription = description,
-                            contentScale = ContentScale.FillBounds,
-                            title = title,
-                            onClick = {}
-                        )
+                            contentDescription = "devil",
+                            title = manga.name,
+                            onClick = {
 
-
-
-                        Column (
-                            modifier = Modifier
-                                .background(Color.White)
-                                .fillMaxHeight()
-                                //.fillMaxWidth()
-                                //.width(100.dp)
-                                .padding(start = 0.dp),
-                            horizontalAlignment = Alignment.Start,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Shadow Slave",
-                                textAlign = TextAlign.Center,
-                                color = Color.Black
-                            )
-                            Text(
-                                text = "Guiltythree",
-                                textAlign = TextAlign.End,
-                                color = Color.Black
-                            )
-                            Text(
-                                text = "Ongoing",
-                                textAlign = TextAlign.End,
-                                color = Color.Black
-                            )
-                            ElevatedButton(
-                                onClick = {},
-                                modifier = Modifier
-                                    .padding(top = 25.dp)
-                            ) {
-                                Text(
-                                    "Add to Library",
-                                    textAlign = TextAlign.End)
                             }
-                        }
-
-                    }
-
-                }
-                LazyColumn (
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ){
-
-                    // Add 5 items
-                    items(5) { index ->
-
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(60.dp),
-                            shape = RectangleShape,
-                            colors = CardDefaults.cardColors(Color(0xFFA4C2D7))
-                        ) {
-                            Text(text = "Item: $index")
-
-                        }
-
-                    }
-
-
-
-                    // Add another single item
-                    item {
-                        Text(text = "Last item",
-                            modifier = Modifier
-                                .clickable {
-                                    navController.navigate("chapter")
-
-                                }
                         )
-
                     }
                 }
+
+
             }
         }
 
-        composable("chapter") {
-            ChapterReader(chapterUrl = "https://chapmanganelo.com/manga-qq130784/chapter-17", navController = navController)
-        }
+
     }
 
 

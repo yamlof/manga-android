@@ -29,7 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
-import com.example.greetingcard.items.Manga
+import com.example.greetingcard.database.Manga
 import com.example.greetingcard.models.LatestManga
 import com.example.greetingcard.pages.ImageCard
 import com.example.greetingcard.requests.RetrofitClient
