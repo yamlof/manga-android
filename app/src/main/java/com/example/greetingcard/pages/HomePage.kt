@@ -1,6 +1,7 @@
 package com.example.greetingcard.pages
 
 import android.app.Application
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -33,24 +34,31 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.map
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
+import com.example.greetingcard.database.Manga
 import com.example.greetingcard.database.MangaViewModel
 import com.example.greetingcard.database.MangaViewModelFactory
+import com.example.greetingcard.sources.manganelo.ChapterReader
+import com.example.greetingcard.sources.manganelo.ItemDetail
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
+@OptIn(ExperimentalCoilApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomePage(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
 
     val navController = rememberNavController()
-
-
-
 
     NavHost(navController = navController, startDestination = "library"){
         composable("library") {
@@ -71,7 +79,11 @@ fun HomePage(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
                 }
 
 
-                val allMangas by mangaViewModel.getAllMangas().observeAsState(emptyList())
+                val allMangas by mangaViewModel.allMangas.observeAsState(initial = emptyList())
+
+
+
+
 
                 val mangas = ""
 
@@ -100,20 +112,43 @@ fun HomePage(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
 
                         val painter = rememberImagePainter(imageRequest)
 
+                        val encodedMangaUrl = Uri.encode(manga.mangaUrl)
 
 
-                        ImageCard(
-                            painter = painter,
-                            contentDescription = "devil",
-                            title = manga.name,
-                            onClick = {
+                        Box(
+                            modifier = Modifier
+                                .padding(5.dp)
+                        ) {
+                            ImageCard(
+                                painter = painter,
+                                contentDescription = "devil",
+                                title = manga.name,
+                                onClick = {
+                                    navController.navigate("itemDetail/${encodedMangaUrl}")
+                                }
+                            )
+                        }
 
-                            }
-                        )
+
+
+
                     }
                 }
 
 
+            }
+        }
+        composable("itemDetail/{manga_url}"){ navBackStackEntry ->
+            val itemName = navBackStackEntry.arguments?.getString("manga_url")
+            if (itemName != null) {
+                ItemDetail(mangaJson = itemName, navController = navController, viewModel = mangaViewModel)
+            }
+        }
+
+        composable("chapter/{chapterUrl}") { navBackStackEntry ->
+            val chapterName = navBackStackEntry.arguments?.getString("chapterUrl")
+            if (chapterName != null) {
+                ChapterReader(chapterUrl = chapterName, navController = navController)
             }
         }
 

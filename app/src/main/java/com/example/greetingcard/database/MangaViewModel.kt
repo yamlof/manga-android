@@ -8,23 +8,26 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import okhttp3.Dispatcher
 
 class MangaViewModel(application: Application,private val mangaRepository: MangaRepository) : AndroidViewModel(application) {
 
-    private val allMangas: MutableLiveData<List<Manga>> = MutableLiveData()
+    val allMangas: MutableLiveData<List<Manga>> = MutableLiveData()
 
     init {
         loadAllMangas()
-
     }
 
     private fun loadAllMangas() {
         viewModelScope.launch {
-            allMangas.postValue(mangaRepository.getAllMangas())
+            allMangas.postValue(mangaRepository.getAllMangas().first())
         }
     }
 
-    fun getAllMangas(): LiveData<List<Manga>> = allMangas
+    fun getAllManga(): LiveData<List<Manga>> = allMangas
 
     /*fun getMangasByStatus(status: String): LiveData<List<Manga>> {
         val result = MutableLiveData<List<Manga>>()
@@ -34,9 +37,11 @@ class MangaViewModel(application: Application,private val mangaRepository: Manga
         return result
     } */
 
-    fun addManga(manga: Manga) {
+    fun addManga(manga: Manga) = viewModelScope.launch(Dispatchers.IO){
         viewModelScope.launch {
             mangaRepository.insertManga(manga)
+
+            loadAllMangas()
         }
     }
 

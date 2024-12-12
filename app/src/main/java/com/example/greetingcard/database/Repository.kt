@@ -2,6 +2,7 @@ package com.example.greetingcard.database
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.flow.Flow
 
 class MangaRepository(private val mangaDao: MangaDao) {
 
@@ -21,7 +22,7 @@ class MangaRepository(private val mangaDao: MangaDao) {
         return mangaDao.getMangasByStatus(status)
     }*/
 
-    suspend fun getAllMangas(): List<Manga> {
+    suspend fun getAllMangas(): Flow<List<Manga>> {
         return mangaDao.getAllMangas()
     }
 

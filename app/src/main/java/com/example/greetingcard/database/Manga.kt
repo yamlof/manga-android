@@ -11,6 +11,7 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "mangas")
 data class Manga(
@@ -33,7 +34,7 @@ interface MangaDao {
 
 
     @Query("SELECT * FROM mangas")
-    suspend fun getAllMangas() : List<Manga>
+    fun getAllMangas() : Flow<List<Manga>>
 }
 
 @Database(entities = [Manga::class] , version = 1, exportSchema = false)

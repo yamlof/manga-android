@@ -3,6 +3,7 @@ package com.example.greetingcard.sources.manganelo
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.greetingcard.database.Manga
 import com.example.greetingcard.models.LatestManga
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.http.Query
 import com.example.greetingcard.requests.RetrofitClient
+import kotlinx.coroutines.flow.StateFlow
 
 
 class MainSearchModel: ViewModel() {
@@ -78,6 +80,9 @@ class MainSearchModel: ViewModel() {
             }
         }
     }
+
+
+
 
 
 }

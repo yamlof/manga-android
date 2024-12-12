@@ -162,7 +162,7 @@ fun ItemDetail(
                     )
 
                     val newManga = Manga(
-                        name =fetcheditem.value ?: "Not Found Yet",
+                        name =fetchedTitle.value ?: "Not Found Yet",
                         cover = cover ?: "Not Found Yet",
                         mangaUrl = mangaJson
                     )
