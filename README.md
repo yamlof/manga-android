@@ -30,7 +30,7 @@
 - [x] Add Search bar to source
 - [x] Add Library Function
 - [x] Fix Manga Info
-- [ ] Fix Look Library
+- [x] Fix Look Library
 - [ ] Limit requests and cache info
 - [ ] Improve Chapter Reading in Webtoons and Mangas
 
