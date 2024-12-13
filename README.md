@@ -28,7 +28,10 @@
 
 - [x] Add Popular bar to source
 - [x] Add Search bar to source
-- [ ] Add Library Function
+- [x] Add Library Function
+- [ ] Fix Manga Info
+- [ ] Fix Look Library
+- [ ] Limit requests and cache info
 
 <!--See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues). -->
 
