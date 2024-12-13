@@ -26,9 +26,6 @@ import coil.request.ImageRequest
 import com.example.greetingcard.models.ImageManga
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.layout.ContentScale
-
-import androidx.compose.ui.tooling.preview.Preview
-
 import com.example.greetingcard.requests.RetrofitClient
 
 @OptIn(ExperimentalCoilApi::class)
@@ -108,10 +105,6 @@ fun ChapterReader(
                     contentScale = ContentScale.FillBounds
                 )
             }
-
-
         }
     }
-
-
 }

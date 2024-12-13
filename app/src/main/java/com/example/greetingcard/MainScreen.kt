@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.greetingcard.database.MangaViewModel
 import com.example.greetingcard.pages.HomePage
 import com.example.greetingcard.pages.NotificationPage

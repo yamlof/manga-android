@@ -53,7 +53,6 @@ fun StyledTextField(viewModel: MainSearchModel) {
 
     val searchQuery by remember { viewModel.searchQuery }
 
-
     TextField(
         value = value,
         onValueChange = { newValue:String ->
@@ -64,11 +63,9 @@ fun StyledTextField(viewModel: MainSearchModel) {
         textStyle = TextStyle(color = Color.Blue, fontWeight = FontWeight.Bold),
         modifier = Modifier
             .padding(20.dp),
-
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Done
         ),
-
         keyboardActions = KeyboardActions(
             onDone = {
                 if (value.isNotBlank()) {
@@ -77,13 +74,8 @@ fun StyledTextField(viewModel: MainSearchModel) {
                 //LocalSoftwareKeyboardController.current?.hide()
             }
         )
-
-
     )
 }
-
-
-
 
 @OptIn(ExperimentalCoilApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -92,7 +84,6 @@ fun MangaNelo(
     modifier: Modifier = Modifier,
     navController: NavHostController
 ) {
-
     val viewModel :MainSearchModel = viewModel()
 
     val searchQuery by remember { viewModel.searchQuery }
@@ -105,17 +96,7 @@ fun MangaNelo(
     val itemsList = remember { mutableStateOf<List<LatestManga>>(emptyList()) }
 
     LaunchedEffect(Unit) {
-
         viewModel.fetchLatest()
-
-        /*try {
-            val fetchedItems = RetrofitClient.apiService.getLatest()
-            itemsList.value = fetchedItems
-            Log.d("MangaNelo", "Fetched items: $itemsList")  //
-
-        } catch (e:Exception) {
-            Log.d("MangaNelo", "Error Fetched items: $e.message")  //
-        }*/
     }
 
     Column {
@@ -148,8 +129,6 @@ fun MangaNelo(
                 }
 
             }
-
-
         }
 
         LazyVerticalGrid(
@@ -158,7 +137,6 @@ fun MangaNelo(
             modifier = Modifier
                 .padding(bottom = 90.dp)
         ) {
-
             items(mangas) { item ->
 
                 val imageUrl = item.cover
@@ -184,14 +162,10 @@ fun MangaNelo(
                 val painter = rememberImagePainter(imageRequest)
                 val encodedMangaUrl = URLEncoder.encode(mangaUrl, StandardCharsets.UTF_8.toString())
 
-                //val navController = rememberNavController()
-
                 Box(modifier = Modifier
                     //.fillMaxWidth(0.5f)
                     .padding(5.dp)
-
                 ){
-
                     val manga = Manga(title, cover = imageUrl, mangaUrl = mangaUrl)
                     val gson = Gson()
                     val mangaJson = gson.toJson(manga)
@@ -204,7 +178,6 @@ fun MangaNelo(
                         onClick = {
                             navController.navigate("itemDetail/${encodedMangaUrl}")
                         }
-
                     )
                 }
             }

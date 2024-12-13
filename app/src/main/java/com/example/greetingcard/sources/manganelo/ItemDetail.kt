@@ -56,7 +56,6 @@ fun ItemDetail(
     navController: NavController,
     viewModel: MangaViewModel
 ) {
-    //val mangaInfo = manga.mangaUrl
     val itemsList = remember { mutableStateOf<List<LatestManga>>(emptyList()) }
 
     Column (
@@ -69,7 +68,6 @@ fun ItemDetail(
         val fetchedAuthor = remember { mutableStateOf<String?>(null) }
         val fetchedChapters = remember {mutableStateOf<List<Chapter>>(emptyList()) }
 
-
         LaunchedEffect(Unit) {
             val fetchedItems = RetrofitClient.apiService.getMangaInfo(mangaJson)
             Log.d("MangaNelo", "Fetched items: $itemsList")  //
@@ -78,8 +76,8 @@ fun ItemDetail(
             fetchedAuthor.value = fetchedItems.author
             fetchedStatus.value = fetchedItems.status
             fetchedChapters.value = fetchedItems.chapters
-
         }
+
         OutlinedCard(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -91,8 +89,6 @@ fun ItemDetail(
                 .padding(top = 25.dp),
             shape = RectangleShape
         ) {
-
-
             val description = "Sunny"
             Row (
                 modifier = modifier
@@ -102,9 +98,6 @@ fun ItemDetail(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceAround
             ){
-
-
-
                 val cover = fetcheditem.value
 
                 val imageRequest = ImageRequest.Builder(LocalContext.current)
@@ -166,7 +159,6 @@ fun ItemDetail(
                         cover = cover ?: "Not Found Yet",
                         mangaUrl = mangaJson
                     )
-
                     ElevatedButton(
                         onClick = {
                             viewModel.addManga(newManga)
@@ -187,16 +179,12 @@ fun ItemDetail(
             modifier = Modifier
                 .fillMaxWidth()
         ){
-
-            // Add 5 items
-
             items(fetchedChapters.value) { item ->
 
                 val chapterName = item.chapterTitle
                 val chapterLink = item.chapterLink
 
                 val encodedChapterUrl = Uri.encode(chapterLink)
-
 
                 Card(
                     modifier = Modifier
@@ -212,12 +200,8 @@ fun ItemDetail(
                         text = chapterName ?: "Loading Title",
                         color = Color.White
                     )
-
                 }
-
             }
-
-            // Add another single item
             item {
                 Text(text = "Last item")
             }

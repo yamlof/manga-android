@@ -34,23 +34,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.map
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
-import com.example.greetingcard.database.Manga
 import com.example.greetingcard.database.MangaViewModel
-import com.example.greetingcard.database.MangaViewModelFactory
 import com.example.greetingcard.sources.manganelo.ChapterReader
 import com.example.greetingcard.sources.manganelo.ItemDetail
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import androidx.compose.runtime.collectAsState
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 
 
 @OptIn(ExperimentalCoilApi::class)
@@ -78,14 +71,7 @@ fun HomePage(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
                     )
                 }
 
-
                 val allMangas by mangaViewModel.allMangas.observeAsState(initial = emptyList())
-
-
-
-
-
-                val mangas = ""
 
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
@@ -114,7 +100,6 @@ fun HomePage(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
 
                         val encodedMangaUrl = Uri.encode(manga.mangaUrl)
 
-
                         Box(
                             modifier = Modifier
                                 .padding(5.dp)
@@ -128,9 +113,6 @@ fun HomePage(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
                                 }
                             )
                         }
-
-
-
 
                     }
                 }
@@ -151,39 +133,8 @@ fun HomePage(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
                 ChapterReader(chapterUrl = chapterName, navController = navController)
             }
         }
-
-
     }
-
-
-
 }
-
-
-
-
-    /*LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp)
-    ) {
-        items(20) {
-            Box(modifier = Modifier
-                //.fillMaxWidth(0.5f)
-                .padding(5.dp)
-            ){
-                val painter = painterResource(id = R.drawable.shadow)
-                val description = "Sunny"
-                val title = "Shadow Slave"
-                ImageCard(
-                    painter = painter,
-                    contentDescription = description,
-                    title = title,
-                    onClick = {}
-                )
-            }
-        }
-    }*/
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -235,34 +186,3 @@ fun ImageCard(
         }
     }
 }
-
-/*@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun HomePage(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.fillMaxWidth()
-            .background(Color(0xFF01034F)),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.Start
-    ) {
-        val painter = painterResource(id = R.drawable.shadow)
-        val description = "Sunny"
-        val title = "Shadow Slave"
-
-
-        Box(modifier = Modifier
-            .fillMaxWidth(0.5f)
-            .padding(5.dp)
-        ){
-            ImageCard(
-                painter = painter,
-                contentDescription = description,
-                title = title
-            )
-
-        }
-
-    }
-
-
-}*/

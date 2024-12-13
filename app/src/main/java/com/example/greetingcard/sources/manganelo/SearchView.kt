@@ -24,19 +24,14 @@ import kotlinx.coroutines.flow.StateFlow
 class MainSearchModel: ViewModel() {
 
     val mangas = mutableStateOf<List<LatestManga>>(emptyList())
-
     private val apiService = RetrofitClient.apiService
-
     val searchQuery = mutableStateOf("")
-
-
     val isLoading = mutableStateOf(false)
     val errorMessage = mutableStateOf<String?>(null)
 
     fun fetchMangasSearch(query: String) {
         isLoading.value = true
         errorMessage.value = null
-
         viewModelScope.launch {
             try{
                 val newMangas = apiService.getSearchInfo(query)
@@ -52,7 +47,6 @@ class MainSearchModel: ViewModel() {
     fun fetchPopular() {
         isLoading.value = true
         errorMessage.value = null
-
         viewModelScope.launch {
             try{
                 val newMangas = apiService.getPopular()
@@ -68,7 +62,6 @@ class MainSearchModel: ViewModel() {
     fun fetchLatest() {
         isLoading.value = true
         errorMessage.value = null
-
         viewModelScope.launch {
             try{
                 val newMangas = apiService.getLatest()
@@ -80,11 +73,6 @@ class MainSearchModel: ViewModel() {
             }
         }
     }
-
-
-
-
-
 }
 
 data class SearchCard(

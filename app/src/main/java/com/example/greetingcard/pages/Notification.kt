@@ -29,7 +29,7 @@ import com.example.greetingcard.requests.RetrofitClient
 import com.example.greetingcard.sources.manganelo.ChapterReader
 import com.example.greetingcard.sources.manganelo.ItemDetail
 import com.example.greetingcard.sources.manganelo.MangaNelo
-import com.example.greetingcard.sources.manganelo.MangaNeloPopular
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -37,10 +37,8 @@ fun NotificationPage(modifier: Modifier = Modifier) {
 
     val mangaViewModel: MangaViewModel = viewModel()
 
-
     var notificationText by remember { mutableStateOf("Loading...") }
 
-    // Use LaunchedEffect to perform network call
     LaunchedEffect(Unit) {
         try {
             val text = RetrofitClient.apiService.getHelloMessage()
@@ -98,8 +96,6 @@ fun NotificationPage(modifier: Modifier = Modifier) {
                 ChapterReader(chapterUrl = chapterName, navController = navController)
             }
         }
-
-
     }
 
     Column(
