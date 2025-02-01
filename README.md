@@ -29,9 +29,10 @@
 - [x] Add Popular bar to source
 - [x] Add Search bar to source
 - [x] Add Library Function
-- [ ] Fix Manga Info
-- [ ] Fix Look Library
+- [x] Fix Manga Info
+- [x] Fix Look Library
 - [ ] Limit requests and cache info
+- [ ] Improve Chapter Reading in Webtoons and Mangas
 
 <!--See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues). -->
 
