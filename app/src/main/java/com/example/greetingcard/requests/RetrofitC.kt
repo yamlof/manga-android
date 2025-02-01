@@ -14,7 +14,7 @@ object RetrofitClient {
     private val client = OkHttpClient.Builder().build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://395e-194-66-243-12.ngrok-free.app")
+        .baseUrl("https://a6d6-194-66-243-8.ngrok-free.app")
         .addConverterFactory(GsonConverterFactory.create())
         .client(client)
         .build()

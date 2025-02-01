@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -102,16 +103,27 @@ fun MangaNelo(
     Column {
         Row (
             modifier = Modifier
-                .background(color = Color.Yellow)
+                .background(color = Color.White)
                 .fillMaxWidth()
                 .padding(25.dp),
             Arrangement.Center
         ){
             Column(
-                Modifier.fillMaxWidth()
+                Modifier.fillMaxWidth(),
+                Arrangement.SpaceEvenly
             ) {
+                Row {
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 40.dp)
+                            ,
+                        text = "MangaNelo"
+                    )
 
-                StyledTextField(viewModel)
+                    StyledTextField(viewModel)
+                }
+
+
 
                 Row {
                     Button(
