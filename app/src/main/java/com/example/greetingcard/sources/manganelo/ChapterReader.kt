@@ -4,12 +4,16 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,7 +30,83 @@ import coil.request.ImageRequest
 import com.example.greetingcard.models.ImageManga
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.layout.ContentScale
+import androidx.lifecycle.ViewModel
 import com.example.greetingcard.requests.RetrofitClient
+
+class ImageViewerViewModel : ViewModel() {
+
+}
+
+
+@Composable
+fun ImageViewer(
+    modifier: Modifier = Modifier,
+    pagerState : PagerState,
+    imgManga: List<ImageManga> // [it parameter]
+
+) {
+    HorizontalPager(
+        state = pagerState,
+        modifier = Modifier
+            .padding(top = 75.dp, bottom = 200.dp)
+    ){ page ->
+
+        val imgManga = imgManga[page]
+
+        val imageLink = imgManga.imgLink
+
+        val imageTitle = imgManga.imgTitle
+
+        val imageRequest = ImageRequest.Builder(LocalContext.current)
+            .data(imageLink)
+            .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0")
+            .addHeader("Accept", "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5")
+            .addHeader("Accept-Language", "en-GB,en;q=0.5")
+            .addHeader("Connection", "keep-alive")
+            .addHeader("Referer", "https://chapmanganelo.com/")
+            .addHeader("Sec-Fetch-Dest", "image")
+            .addHeader("Sec-Fetch-Mode", "no-cors")
+            .addHeader("Sec-Fetch-Site", "cross-site")
+            .addHeader("Priority", "u=5, i")
+            .addHeader("Pragma", "no-cache")
+            .addHeader("Cache-Control", "no-cache")
+            .build()
+
+        val painter = rememberImagePainter(imageRequest)
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.Yellow)
+        ) {
+            Image(
+                painter = painter,
+                modifier = Modifier.fillMaxWidth(),
+                contentDescription = "image",
+                contentScale = ContentScale.FillBounds
+            )
+        }
+    }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Button(
+            onClick = {},
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text("Horizontal")
+        }
+        Button(
+            onClick = {},
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text("Vertical")
+        }
+    }
+
+}
+
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
@@ -64,47 +144,8 @@ fun ChapterReader(
             fetchedItem.value.size
         })
 
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier
-                .padding(top = 75.dp, bottom = 200.dp)
-        ){
+        val imgManga = fetchedItem.value
 
-            val imgManga = fetchedItem.value[it]
-
-            val imageLink = imgManga.imgLink
-
-            val imageTitle = imgManga.imgTitle
-
-            val imageRequest = ImageRequest.Builder(LocalContext.current)
-                .data(imageLink)
-                .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0")
-                .addHeader("Accept", "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5")
-                .addHeader("Accept-Language", "en-GB,en;q=0.5")
-                .addHeader("Connection", "keep-alive")
-                .addHeader("Referer", "https://chapmanganelo.com/")
-                .addHeader("Sec-Fetch-Dest", "image")
-                .addHeader("Sec-Fetch-Mode", "no-cors")
-                .addHeader("Sec-Fetch-Site", "cross-site")
-                .addHeader("Priority", "u=5, i")
-                .addHeader("Pragma", "no-cache")
-                .addHeader("Cache-Control", "no-cache")
-                .build()
-
-            val painter = rememberImagePainter(imageRequest)
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.Yellow)
-            ) {
-                Image(
-                    painter = painter,
-                    modifier = Modifier.fillMaxWidth(),
-                    contentDescription = "image",
-                    contentScale = ContentScale.FillBounds
-                )
-            }
-        }
+        ImageViewer(modifier= Modifier,pagerState = pagerState, imgManga = imgManga)
     }
 }

@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -61,15 +62,19 @@ fun HomePage(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
             ){
                 Row (modifier = modifier
                     .fillMaxWidth()
-                    .background(Color.Yellow),
+                    .clip(shape = RoundedCornerShape(2.dp))
+                    .background(Color.Black)
+                    .height(75.dp),
                 ){
                     Text(
                         text = "Library",
                         fontSize = 40.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.Black
+                        color = Color.White
                     )
                 }
+
+
 
                 val allMangas by mangaViewModel.allMangas.observeAsState(initial = emptyList())
 
@@ -153,7 +158,7 @@ fun ImageCard(
             //.size(300.dp,100.dp),
         shape = RoundedCornerShape(15.dp),
     ){
-        Box(modifier = Modifier.height(300.dp)) {
+        Box(modifier = Modifier.height(250.dp)) {
             Image(
                 painter = painter,
                 contentDescription = contentDescription,

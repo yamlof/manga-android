@@ -173,7 +173,6 @@ fun ItemDetail(
                 }
 
             }
-
         }
         LazyColumn (
             modifier = Modifier
