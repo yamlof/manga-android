@@ -8,10 +8,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.greetingcard.requests.RetrofitClient
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import okhttp3.Dispatcher
 
 class MangaViewModel(application: Application,private val mangaRepository: MangaRepository) : AndroidViewModel(application) {
 
@@ -40,6 +39,20 @@ class MangaViewModel(application: Application,private val mangaRepository: Manga
     fun addManga(manga: Manga) = viewModelScope.launch(Dispatchers.IO){
         viewModelScope.launch {
             mangaRepository.insertManga(manga)
+            val mangainf = RetrofitClient.apiService.getMangaInfo(manga.mangaUrl)
+
+            val chapterEntities =mangainf.chapters.map{ chapterDto ->
+                ChapterRoom(
+                    imgTitle = chapterDto.chapterTitle,
+                    imgLink = chapterDto.chapterLink,
+                    mangaUrl = manga.mangaUrl
+                )
+
+            }
+
+            chapterEntities.forEach { chapter ->
+                mangaRepository.addChapter(chapter)
+            }
 
             loadAllMangas()
         }

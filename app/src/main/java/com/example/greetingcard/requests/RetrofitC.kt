@@ -14,7 +14,7 @@ object RetrofitClient {
     private val client = OkHttpClient.Builder().build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://395e-194-66-243-12.ngrok-free.app")
+        .baseUrl("https://manga-sp.onrender.com/")
         .addConverterFactory(GsonConverterFactory.create())
         .client(client)
         .build()
@@ -23,6 +23,9 @@ object RetrofitClient {
 }
 
 interface ApiService {
+
+   // private var characterCache = mutableMapOf()
+
     @GET("hello")
     suspend fun getHelloMessage(): String
 
