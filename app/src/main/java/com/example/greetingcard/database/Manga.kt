@@ -1,6 +1,7 @@
 package com.example.greetingcard.database
 
 import android.content.Context
+import androidx.annotation.NonNull
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -23,7 +24,9 @@ import kotlinx.coroutines.flow.Flow
 data class Manga(
     @PrimaryKey val name :String,
     val cover : String,
-    val mangaUrl : String
+    val mangaUrl : String,
+    val author : String,
+    val status : String,
 )
 
 @Entity(tableName = "chapters",
@@ -35,8 +38,8 @@ data class Manga(
     )]
 )
 data class ChapterRoom(
-    @PrimaryKey val imgTitle: String,
-    val imgLink : String,
+    @PrimaryKey val chapterTitle: String,
+    val chapterLink : String,
     val mangaUrl: String
 )
 
@@ -54,6 +57,9 @@ interface MangaDao {
 
     @Query("SELECT * FROM mangas")
     fun getAllMangas() : Flow<List<Manga>>
+
+    @Query("SELECT * FROM mangas WHERE name = :mangaId LIMIT 1")
+    suspend fun getMangaById(mangaId: String): Manga?
 }
 
 @Dao
@@ -69,7 +75,7 @@ interface ChapterDao{
 }
 
 
-@Database(entities = [Manga::class,ChapterRoom::class] , version = 5, exportSchema = false)
+@Database(entities = [Manga::class,ChapterRoom::class] , version = 7, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun mangaDao() : MangaDao
     abstract fun chapterDao(): ChapterDao
@@ -84,7 +90,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "manga_database" // The name of your database
+                    "manga_database" // The name of database
                 )
                     .fallbackToDestructiveMigration()
                     .build()

@@ -8,6 +8,10 @@ class MangaRepository(
     private val chapterDao: ChapterDao
 ) {
 
+    suspend fun getMangaById(mangaId: String): Manga? {
+        return mangaDao.getMangaById(mangaId)
+    }
+
     suspend fun insertManga(manga: Manga) {
         mangaDao.insertManga(manga)
     }

@@ -44,7 +44,7 @@ import coil.request.ImageRequest
 import com.example.greetingcard.database.MangaViewModel
 import com.example.greetingcard.sources.manganelo.ChapterReader
 import com.example.greetingcard.sources.manganelo.ItemDetail
-
+import com.example.greetingcard.sources.manganelo.LibraryItemDetail
 
 
 @OptIn(ExperimentalCoilApi::class)
@@ -126,6 +126,12 @@ fun HomePage(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
             }
         }
         composable("itemDetail/{manga_url}"){ navBackStackEntry ->
+            val itemName = navBackStackEntry.arguments?.getString("manga_url")
+            if (itemName != null) {
+                LibraryItemDetail(mangaJson = itemName, navController = navController, viewModel = mangaViewModel)
+            }
+        }
+        composable("SourceItemDetail/{manga_url}"){ navBackStackEntry ->
             val itemName = navBackStackEntry.arguments?.getString("manga_url")
             if (itemName != null) {
                 ItemDetail(mangaJson = itemName, navController = navController, viewModel = mangaViewModel)

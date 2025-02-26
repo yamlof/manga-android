@@ -10,7 +10,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.greetingcard.requests.RetrofitClient
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 
 class MangaViewModel(application: Application,private val mangaRepository: MangaRepository) : AndroidViewModel(application) {
 
@@ -43,8 +51,8 @@ class MangaViewModel(application: Application,private val mangaRepository: Manga
 
             val chapterEntities =mangainf.chapters.map{ chapterDto ->
                 ChapterRoom(
-                    imgTitle = chapterDto.chapterTitle,
-                    imgLink = chapterDto.chapterLink,
+                    chapterTitle = chapterDto.chapterTitle,
+                    chapterLink = chapterDto.chapterLink,
                     mangaUrl = manga.mangaUrl
                 )
 
@@ -56,6 +64,20 @@ class MangaViewModel(application: Application,private val mangaRepository: Manga
 
             loadAllMangas()
         }
+    }
+
+    private val _manga = MutableStateFlow<Manga?>(null)
+    val manga: StateFlow<Manga?> = _manga.asStateFlow()
+
+    fun getMangaById(mangaId: String) {
+        viewModelScope.launch {
+            _manga.value = mangaRepository.getMangaById(mangaId)
+        }
+    }
+
+    fun getChaptersForManga(mangaId: String): StateFlow<List<ChapterRoom>> {
+        return mangaRepository.getChaptersForManga(mangaId)
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
     }
 
     fun updateManga(manga: Manga) {
