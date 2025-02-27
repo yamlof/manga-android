@@ -65,23 +65,16 @@ fun LibraryItemDetail(
         modifier = Modifier
             .padding(bottom = 75.dp)
     ){
-        val fetcheditem  = remember { mutableStateOf<String?>(null) }
-        val fetchedTitle = remember { mutableStateOf<String?>(null) }
-        val fetchedStatus = remember { mutableStateOf<String?>(null) }
-        val fetchedAuthor = remember { mutableStateOf<String?>(null) }
-        val fetchedChapters = remember { mutableStateOf<List<ChapterRoom>>(emptyList()) }
+        val localManga by viewModel.getMangaById(mangaJson).collectAsState(initial = null)
 
-        val localManga by viewModel.manga.collectAsState()
+        LaunchedEffect(mangaJson) {
+            Log.d("LibraryItemDetail", "Fetching manga with ID: $mangaJson")
+            viewModel.getMangaById(mangaJson).collect { manga ->
+                Log.d("LibraryItemDetail", "Manga fetched: $manga")
+            }
+        }
+
         val localChapters by viewModel.getChaptersForManga(mangaJson).collectAsState()
-
-        fetcheditem.value = localManga?.cover
-        fetchedTitle.value = localManga?.name
-        fetchedAuthor.value = localManga?.author
-        fetchedStatus.value = localManga?.status
-        fetchedChapters.value = localChapters
-
-        //println(localManga)
-
 
         OutlinedCard(
             colors = CardDefaults.cardColors(
@@ -103,10 +96,9 @@ fun LibraryItemDetail(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceAround
             ){
-                val cover = localManga?.cover
 
                 val imageRequest = ImageRequest.Builder(LocalContext.current)
-                    .data(cover)
+                    .data(localManga?.cover)
                     .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0")
                     .addHeader("Accept", "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5")
                     .addHeader("Accept-Language", "en-GB,en;q=0.5")
@@ -161,7 +153,7 @@ fun LibraryItemDetail(
 
                     val newManga = Manga(
                         name = localManga?.name ?: "Not Found Yet",
-                        cover = cover ?: "Not Found Yet",
+                        cover = localManga?.cover ?: "Not Found Yet",
                         mangaUrl = mangaJson,
                         author = localManga?.author ?: "Unknown",
                         status = localManga?.status ?: "Unknown"

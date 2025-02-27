@@ -8,7 +8,7 @@ class MangaRepository(
     private val chapterDao: ChapterDao
 ) {
 
-    suspend fun getMangaById(mangaId: String): Manga? {
+    fun getMangaById(mangaId: String): Flow<Manga?> {
         return mangaDao.getMangaById(mangaId)
     }
 

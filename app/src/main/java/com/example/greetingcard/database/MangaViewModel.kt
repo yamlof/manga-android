@@ -69,10 +69,8 @@ class MangaViewModel(application: Application,private val mangaRepository: Manga
     private val _manga = MutableStateFlow<Manga?>(null)
     val manga: StateFlow<Manga?> = _manga.asStateFlow()
 
-    fun getMangaById(mangaId: String) {
-        viewModelScope.launch {
-            _manga.value = mangaRepository.getMangaById(mangaId)
-        }
+    fun getMangaById(mangaId: String) : Flow<Manga?> {
+        return mangaRepository.getMangaById(mangaId)
     }
 
     fun getChaptersForManga(mangaId: String): StateFlow<List<ChapterRoom>> {

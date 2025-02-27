@@ -58,8 +58,8 @@ interface MangaDao {
     @Query("SELECT * FROM mangas")
     fun getAllMangas() : Flow<List<Manga>>
 
-    @Query("SELECT * FROM mangas WHERE name = :mangaId LIMIT 1")
-    suspend fun getMangaById(mangaId: String): Manga?
+    @Query("SELECT * FROM mangas WHERE mangaUrl = :mangaUrl LIMIT 1")
+    fun getMangaById(mangaUrl: String): Flow<Manga?>
 }
 
 @Dao
