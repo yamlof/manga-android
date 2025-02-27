@@ -31,7 +31,7 @@
 - [x] Add Library Function
 - [x] Fix Manga Info
 - [x] Fix Look Library
-- [ ] Limit requests and cache info
+- [ ] Limit requests and cache info (partially done)
 - [ ] Improve Chapter Reading in Webtoons and Mangas
 
 <!--See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues). -->
