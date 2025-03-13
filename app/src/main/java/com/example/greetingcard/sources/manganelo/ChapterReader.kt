@@ -38,12 +38,15 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.layout.ContentScale
 import androidx.lifecycle.ViewModel
+import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
 import com.example.greetingcard.requests.RetrofitClient
 
 class ImageViewerViewModel : ViewModel() {
 
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun HorizontalImage(
     modifier: Modifier = Modifier,
@@ -99,6 +102,7 @@ fun HorizontalImage(
 
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun VerticalImage(
     modifier: Modifier = Modifier,
@@ -131,7 +135,8 @@ fun VerticalImage(
             .addHeader("Cache-Control", "no-cache")
             .build()
 
-        val painter = rememberImagePainter(imageRequest)
+        val painter = rememberAsyncImagePainter(
+            model = imageRequest)
 
         Column(
             modifier = Modifier
@@ -183,6 +188,8 @@ fun ImageViewer(
                 Text("Vertical")
             }
     }
+
+        HorizontalImage(modifier= Modifier,pager = pagerState, imgManga = imgManga)
         when (currentView) {
             1 -> HorizontalImage(modifier= Modifier,pager = pagerState, imgManga = imgManga)
             2 -> VerticalImage(modifier= Modifier,pager = pagerState, imgManga = imgManga)
