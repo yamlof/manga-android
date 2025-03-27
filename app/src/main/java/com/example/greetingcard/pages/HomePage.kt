@@ -1,5 +1,6 @@
 package com.example.greetingcard.pages
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.net.Uri
 import android.os.Build
@@ -20,7 +21,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -45,6 +51,24 @@ import com.example.greetingcard.database.MangaViewModel
 import com.example.greetingcard.sources.manganelo.ChapterReader
 import com.example.greetingcard.sources.manganelo.ItemDetail
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SmallTopAppBarExample() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = {
+                    Text("Library 2")
+                }
+            )
+        },
+    ){}
+}
 
 
 @OptIn(ExperimentalCoilApi::class)
@@ -66,12 +90,14 @@ fun HomePage(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
                     .background(Color.Black)
                     .height(75.dp),
                 ){
-                    Text(
+
+                    SmallTopAppBarExample()
+                    /*Text(
                         text = "Library",
                         fontSize = 40.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
-                    )
+                    ) */
                 }
 
 
