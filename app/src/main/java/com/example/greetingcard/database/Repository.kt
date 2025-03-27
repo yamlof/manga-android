@@ -1,14 +1,27 @@
 package com.example.greetingcard.database
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import com.example.greetingcard.models.ImageManga
 import kotlinx.coroutines.flow.Flow
 
-class MangaRepository(private val mangaDao: MangaDao) {
+class MangaRepository(
+    private val mangaDao: MangaDao,
+    private val chapterDao: ChapterDao
+) {
+
+    fun getMangaById(mangaId: String): Flow<Manga?> {
+        return mangaDao.getMangaById(mangaId)
+    }
 
     suspend fun insertManga(manga: Manga) {
         mangaDao.insertManga(manga)
     }
+
+    fun getChaptersForManga(mangaId: String) = chapterDao.getChaptersForManga(mangaId)
+
+    suspend fun addChapter(chapter: ChapterRoom) {
+        chapterDao.insertChapter(chapter)
+    }
+
 
     suspend fun updateManga(manga: Manga) {
         mangaDao.update(manga)

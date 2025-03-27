@@ -83,7 +83,7 @@ fun NotificationPage(modifier: Modifier = Modifier) {
             MangaNelo(navController =navController)
         }
 
-        composable("itemDetail/{manga_url}"){ navBackStackEntry ->
+        composable("SourceItemDetail/{manga_url}"){ navBackStackEntry ->
             val itemName = navBackStackEntry.arguments?.getString("manga_url")
             if (itemName != null) {
                 ItemDetail(mangaJson = itemName, navController = navController, viewModel = mangaViewModel)

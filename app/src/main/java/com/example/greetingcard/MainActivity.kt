@@ -8,10 +8,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import com.example.greetingcard.database.AppDatabase
+import com.example.greetingcard.database.ImageCacheManager
 import com.example.greetingcard.database.MangaRepository
 import com.example.greetingcard.database.MangaViewModel
 import com.example.greetingcard.database.MangaViewModelFactory
 import com.example.greetingcard.ui.theme.GreetingCardTheme
+
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -25,8 +27,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             GreetingCardTheme {
 
+                val imageCacheManager = ImageCacheManager(applicationContext)
+
                 val mangaDao = AppDatabase.getDatabase(application).mangaDao()
-                val mangaRepository = MangaRepository(mangaDao)
+                val chapterDao = AppDatabase.getDatabase(application).chapterDao()
+                val mangaRepository = MangaRepository(mangaDao,chapterDao)
                 val mangaViewModelFactory = MangaViewModelFactory(mangaRepository)
                 mangaViewModel = ViewModelProvider(this, mangaViewModelFactory).get(MangaViewModel::class.java)
 

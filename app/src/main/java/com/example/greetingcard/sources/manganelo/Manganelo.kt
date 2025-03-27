@@ -178,7 +178,13 @@ fun MangaNelo(
                     //.fillMaxWidth(0.5f)
                     .padding(5.dp)
                 ){
-                    val manga = Manga(title, cover = imageUrl, mangaUrl = mangaUrl)
+                    val manga = Manga(
+                        title,
+                        cover = imageUrl,
+                        mangaUrl = mangaUrl,
+                        author = "",
+                        status = ""
+                    )
                     val gson = Gson()
                     val mangaJson = gson.toJson(manga)
 
@@ -188,7 +194,7 @@ fun MangaNelo(
                         title = title,
                         contentScale = ContentScale.FillBounds,
                         onClick = {
-                            navController.navigate("itemDetail/${encodedMangaUrl}")
+                            navController.navigate("SourceItemDetail/${encodedMangaUrl}")
                         }
                     )
                 }

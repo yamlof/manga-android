@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -46,17 +45,15 @@ import coil.request.ImageRequest
 import com.example.greetingcard.database.ChapterRoom
 import com.example.greetingcard.database.Manga
 import com.example.greetingcard.database.MangaViewModel
-import com.example.greetingcard.models.Chapter
 import com.example.greetingcard.models.LatestManga
 import com.example.greetingcard.pages.ImageCard
 import com.example.greetingcard.requests.RetrofitClient
 
 
-
 @OptIn(ExperimentalCoilApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ItemDetail(
+fun LibraryItemDetail(
     modifier: Modifier = Modifier,
     mangaJson:String,
     navController: NavController,
@@ -68,35 +65,16 @@ fun ItemDetail(
         modifier = Modifier
             .padding(bottom = 75.dp)
     ){
-        val fetcheditem  = remember { mutableStateOf<String?>(null) }
-        val fetchedTitle = remember { mutableStateOf<String?>(null) }
-        val fetchedStatus = remember { mutableStateOf<String?>(null) }
-        val fetchedAuthor = remember { mutableStateOf<String?>(null) }
-        val fetchedChapters = remember {mutableStateOf<List<ChapterRoom>>(emptyList()) }
+        val localManga by viewModel.getMangaById(mangaJson).collectAsState(initial = null)
 
-        val localManga by viewModel.manga.collectAsState()
-        val localChapters by viewModel.getChaptersForManga(mangaJson).collectAsState()
-
-
-
-        LaunchedEffect(localManga, localChapters) {
-            if (localManga == null) {
-                val fetchedItems = RetrofitClient.apiService.getMangaInfo(mangaJson)
-                Log.d("MangaNelo", "Fetched items: $fetchedItems")
-                fetcheditem.value = fetchedItems.cover
-                fetchedTitle.value = fetchedItems.title
-                fetchedAuthor.value = fetchedItems.author
-                fetchedStatus.value = fetchedItems.status
-                fetchedChapters.value = fetchedItems.chapters
-            } else {
-                fetcheditem.value = localManga?.cover
-                fetchedTitle.value = localManga?.name
-                fetchedAuthor.value = localManga?.author
-                fetchedStatus.value = localManga?.status
-                fetchedChapters.value = localChapters
+        LaunchedEffect(mangaJson) {
+            Log.d("LibraryItemDetail", "Fetching manga with ID: $mangaJson")
+            viewModel.getMangaById(mangaJson).collect { manga ->
+                Log.d("LibraryItemDetail", "Manga fetched: $manga")
             }
         }
 
+        val localChapters by viewModel.getChaptersForManga(mangaJson).collectAsState()
 
         OutlinedCard(
             colors = CardDefaults.cardColors(
@@ -118,21 +96,20 @@ fun ItemDetail(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceAround
             ){
-                val cover = fetcheditem.value
 
                 val imageRequest = ImageRequest.Builder(LocalContext.current)
-                    .data(cover)
-                    .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36")
-                    .addHeader("Accept", "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8")
-                    .addHeader("Accept-Language", "en-GB,en;q=0.9")
-                    .addHeader("Cache-Control", "no-cache")
-                    .addHeader("Pragma", "no-cache")
-                    .addHeader("Priority", "i")
-                    .addHeader("Referer", "https://mangakakalot.to/")
+                    .data(localManga?.cover)
+                    .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0")
+                    .addHeader("Accept", "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5")
+                    .addHeader("Accept-Language", "en-GB,en;q=0.5")
+                    .addHeader("Connection", "keep-alive")
+                    .addHeader("Referer", "https://chapmanganelo.com/")
                     .addHeader("Sec-Fetch-Dest", "image")
                     .addHeader("Sec-Fetch-Mode", "no-cors")
-                    .addHeader("Sec-Fetch-Site", "same-site")
-                    .addHeader("Sec-GPC", "1")
+                    .addHeader("Sec-Fetch-Site", "cross-site")
+                    .addHeader("Priority", "u=5, i")
+                    .addHeader("Pragma", "no-cache")
+                    .addHeader("Cache-Control", "no-cache")
                     .build()
 
                 val painter = rememberImagePainter(imageRequest)
@@ -145,7 +122,7 @@ fun ItemDetail(
                         .padding(top = 20.dp, bottom = 20.dp),
                     contentDescription = description,
                     contentScale = ContentScale.FillBounds,
-                    title = fetchedTitle.value ?: "Loading title...",
+                    title = localManga?.name ?: "Loading title...",
                     onClick = {}
                 )
 
@@ -159,27 +136,27 @@ fun ItemDetail(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = fetchedTitle.value ?: "Loading title...",
+                        text = localManga?.name ?: "Loading title...",
                         textAlign = TextAlign.Center,
                         color = Color.Black
                     )
                     Text(
-                        text = fetchedAuthor.value ?: "Loading title...",
+                        text = localManga?.author ?: "Loading title...",
                         textAlign = TextAlign.End,
                         color = Color.Black
                     )
                     Text(
-                        text = fetchedStatus.value ?: "Loading title...",
+                        text = localManga?.status ?: "Loading title...",
                         textAlign = TextAlign.End,
                         color = Color.Black
                     )
 
                     val newManga = Manga(
-                        name =fetchedTitle.value ?: "Not Found Yet",
-                        cover = cover ?: "Not Found Yet",
+                        name = localManga?.name ?: "Not Found Yet",
+                        cover = localManga?.cover ?: "Not Found Yet",
                         mangaUrl = mangaJson,
-                        author = fetchedAuthor.toString(),
-                        status = fetchedStatus.toString()
+                        author = localManga?.author ?: "Unknown",
+                        status = localManga?.status ?: "Unknown"
                     )
                     ElevatedButton(
                         onClick = {
@@ -193,14 +170,13 @@ fun ItemDetail(
                             textAlign = TextAlign.End)
                     }
                 }
-
             }
         }
         LazyColumn (
             modifier = Modifier
                 .fillMaxWidth()
         ){
-            items(fetchedChapters.value) { item ->
+            items(localChapters) { item ->
 
                 val chapterName = item.chapterTitle
                 val chapterLink = item.chapterLink
@@ -219,7 +195,6 @@ fun ItemDetail(
                 ) {
                     Text(
                         text = chapterName ?: "Loading Title",
-                        style = MaterialTheme.typography.titleMedium,
                         color = Color.White
                     )
                 }
