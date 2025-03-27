@@ -3,6 +3,8 @@ package com.example.greetingcard.requests
 import com.example.greetingcard.models.ImageManga
 import com.example.greetingcard.models.LatestManga
 import com.example.greetingcard.models.MangaInfo
+import com.example.greetingcard.models.Mangadex
+import okhttp3.Call
 
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -14,7 +16,7 @@ object RetrofitClient {
     private val client = OkHttpClient.Builder().build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://a6d6-194-66-243-8.ngrok-free.app")
+        .baseUrl("https://manga-sp.onrender.com")
         .addConverterFactory(GsonConverterFactory.create())
         .client(client)
         .build()
@@ -23,6 +25,10 @@ object RetrofitClient {
 }
 
 interface ApiService {
+
+    @GET("manga")
+    suspend fun getManga(): retrofit2.Call<Mangadex>
+
     @GET("hello")
     suspend fun getHelloMessage(): String
 

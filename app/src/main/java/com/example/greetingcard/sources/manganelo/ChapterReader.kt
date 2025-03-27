@@ -38,6 +38,7 @@ class ImageViewerViewModel : ViewModel() {
 }
 
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ImageViewer(
     modifier: Modifier = Modifier,
