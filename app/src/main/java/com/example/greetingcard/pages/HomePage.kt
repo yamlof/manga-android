@@ -20,6 +20,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -44,12 +46,26 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.util.TableInfo
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.example.greetingcard.database.MangaViewModel
 import com.example.greetingcard.sources.manganelo.ChapterReader
 import com.example.greetingcard.sources.manganelo.ItemDetail
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LayoutOptionsDialog(onDismiss :() -> Unit,onLayoutSelected : (LayoutStyle) -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        text = 
+    ){
+
+    }
+}
+
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,6 +83,7 @@ fun SmallTopAppBarExample() {
                 }
             )
         },
+
     ){}
 }
 
