@@ -102,17 +102,12 @@ fun ItemDetail(
 
                 val imageRequest = ImageRequest.Builder(LocalContext.current)
                     .data(cover)
-                    .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36")
-                    .addHeader("Accept", "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8")
-                    .addHeader("Accept-Language", "en-GB,en;q=0.9")
-                    .addHeader("Cache-Control", "no-cache")
-                    .addHeader("Pragma", "no-cache")
-                    .addHeader("Priority", "i")
-                    .addHeader("Referer", "https://mangakakalot.to/")
-                    .addHeader("Sec-Fetch-Dest", "image")
-                    .addHeader("Sec-Fetch-Mode", "no-cors")
-                    .addHeader("Sec-Fetch-Site", "same-site")
-                    .addHeader("Sec-GPC", "1")
+                    .addHeader(
+                        "User-Agent",
+                        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+                    )
+                    .addHeader("Referer", "https://www.mangabats.com/")
+                    .removeHeader("Connection") // Let OkHttp handle this
                     .build()
 
                 val painter = rememberImagePainter(imageRequest)

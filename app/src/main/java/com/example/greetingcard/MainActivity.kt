@@ -6,12 +6,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
+import coil.compose.LocalImageLoader
 import com.example.greetingcard.database.AppDatabase
 import com.example.greetingcard.database.MangaRepository
 import com.example.greetingcard.database.MangaViewModel
 import com.example.greetingcard.database.MangaViewModelFactory
 import com.example.greetingcard.ui.theme.GreetingCardTheme
+import coil3.ImageLoader
+
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import coil3.request.crossfade
+import okhttp3.OkHttpClient
+
+
+
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -22,6 +33,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+
         setContent {
             GreetingCardTheme {
 
@@ -30,9 +43,10 @@ class MainActivity : ComponentActivity() {
                 val mangaViewModelFactory = MangaViewModelFactory(mangaRepository)
                 mangaViewModel = ViewModelProvider(this, mangaViewModelFactory).get(MangaViewModel::class.java)
 
-
-
                 MainScreen(mangaViewModel = mangaViewModel)
+
+
+                //MainScreen(mangaViewModel = mangaViewModel)
 
             }
         }

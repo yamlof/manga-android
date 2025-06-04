@@ -1,5 +1,3 @@
-import org.gradle.internal.impldep.com.amazonaws.PredefinedClientConfigurations.defaultConfig
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -12,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.example.greetingcard"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.greetingcard"
@@ -106,5 +104,21 @@ dependencies {
 
     // optional - Paging 3 Integration
     implementation("androidx.room:room-paging:$room_version")
+
+    implementation("io.coil-kt.coil3:coil:3.2.0") // core library
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.2.0") // network fetcher
+    implementation("io.coil-kt.coil3:coil-compose:3.2.0")
+
+    implementation("net.engawapg.lib:zoomable:1.5.1")
+
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.github.bumptech.glide:okhttp3-integration:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
+    //implementation("io.coil-kt:coil-compose:2.4.0")
+
+
 }
+
 

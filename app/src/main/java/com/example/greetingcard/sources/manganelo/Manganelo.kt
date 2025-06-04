@@ -158,17 +158,12 @@ fun MangaNelo(
 
                 val imageRequest = ImageRequest.Builder(LocalContext.current)
                     .data(imageUrl)
-                    .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0")
-                    .addHeader("Accept", "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5")
-                    .addHeader("Accept-Language", "en-GB,en;q=0.5")
-                    .addHeader("Connection", "keep-alive")
-                    .addHeader("Referer", "https://chapmanganelo.com/")
-                    .addHeader("Sec-Fetch-Dest", "image")
-                    .addHeader("Sec-Fetch-Mode", "no-cors")
-                    .addHeader("Sec-Fetch-Site", "cross-site")
-                    .addHeader("Priority", "u=5, i")
-                    .addHeader("Pragma", "no-cache")
-                    .addHeader("Cache-Control", "no-cache")
+                    .addHeader(
+                        "User-Agent",
+                        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+                    )
+                    .addHeader("Referer", "https://www.mangabats.com/")
+                    .removeHeader("Connection") // Let OkHttp handle this
                     .build()
 
                 val painter = rememberImagePainter(imageRequest)

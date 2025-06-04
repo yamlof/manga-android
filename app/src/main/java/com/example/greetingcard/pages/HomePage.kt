@@ -53,7 +53,7 @@ import coil.request.ImageRequest
 import com.example.greetingcard.database.MangaViewModel
 import com.example.greetingcard.sources.manganelo.ChapterReader
 import com.example.greetingcard.sources.manganelo.ItemDetail
-
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LayoutOptionsDialog(onDismiss :() -> Unit,onLayoutSelected : (LayoutStyle) -> Unit) {
@@ -63,7 +63,7 @@ fun LayoutOptionsDialog(onDismiss :() -> Unit,onLayoutSelected : (LayoutStyle) -
     ){
 
     }
-}
+} */
 
 
 
