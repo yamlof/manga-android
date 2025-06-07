@@ -116,6 +116,12 @@ dependencies {
     implementation("com.github.bumptech.glide:okhttp3-integration:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
+    implementation("io.ktor:ktor-client-core:2.3.0")
+    implementation("io.ktor:ktor-client-cio:2.3.0")
+    implementation("io.ktor:ktor-client-okhttp:2.3.0") // optional if you want better control over headers
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
     //implementation("io.coil-kt:coil-compose:2.4.0")
 
 

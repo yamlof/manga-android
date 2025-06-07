@@ -79,7 +79,7 @@ fun SmallTopAppBarExample() {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text("Library 2")
+                    Text("Library")
                 }
             )
         },

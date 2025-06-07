@@ -1,6 +1,8 @@
 package com.example.greetingcard.sources.manganelo
 
 
+import android.annotation.SuppressLint
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -65,7 +67,10 @@ import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.style.TextAlign
+import coil3.Bitmap
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
@@ -74,12 +79,24 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpRequestRetry
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.isSuccess
+import kotlinx.coroutines.delay
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import java.net.URLDecoder
+import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
-
+import javax.net.ssl.X509TrustManager
 
 class RequestHeaderInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -118,6 +135,9 @@ fun DisplayImage(
 ) {
     val context = LocalContext.current
     val zoomState = rememberZoomState()
+    var bitmap = remember { mutableStateOf<Bitmap?>(null) }
+    var isLoading = remember { mutableStateOf(true) }
+    var hasError = remember { mutableStateOf(false) }
 
     val userAgents = remember {
         listOf(
@@ -129,50 +149,81 @@ fun DisplayImage(
         )
     }
 
-    val okHttpClient = remember {
-        OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val randomUserAgent = userAgents.random()
-                val request = chain.request().newBuilder()
-                    .addHeader(
-                        "User-Agent",
-                        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-                    )
-                    .addHeader("Referer", "https://www.mangabats.com/")
-                    .removeHeader("Connection") // Let OkHttp handle this
-                    .build()
-
-                // Add small delay to avoid rapid requests
-                Thread.sleep(100)
-                chain.proceed(request)
+    // Create Ktor HTTP client
+    val httpClient = remember {
+        HttpClient(CIO) {
+            install(HttpTimeout) {
+                requestTimeoutMillis = 30000
+                connectTimeoutMillis = 30000
+                socketTimeoutMillis = 60000
             }
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .retryOnConnectionFailure(true)
-            .followRedirects(true)
-            .followSslRedirects(true)
-            .build()
+            install(HttpRequestRetry) {
+                retryOnServerErrors(maxRetries = 3)
+                retryOnException(maxRetries = 3, retryOnTimeout = true)
+                exponentialDelay()
+            }
+
+            engine {
+                https {
+                    trustManager = object : X509TrustManager {
+                        @SuppressLint("TrustAllX509TrustManager")
+                        override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
+                        @SuppressLint("TrustAllX509TrustManager")
+                        override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
+                        override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+                    }
+                }
+            }
+
+            defaultRequest {
+                header("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0")
+                header("Accept", "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5")
+                header("Accept-Language", "en-GB,en;q=0.5")
+                header("Connection", "keep-alive")
+                header("Referer", "https://www.mangabats.com/")
+                header("Sec-Fetch-Dest", "image")
+                header("Sec-Fetch-Mode", "no-cors")
+                header("Sec-Fetch-Site", "cross-site")
+                header("Priority", "u=5, i")
+                header("Pragma", "no-cache")
+                header("Cache-Control", "no-cache")
+            }
+        }
     }
 
-    // Create GlideUrl with custom headers
-    val glideUrl = remember(imageManga.imgLink) {
-        GlideUrl(
-            imageManga.imgLink,
-            LazyHeaders.Builder()
-                .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0")
-                .addHeader("Accept", "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5")
-                .addHeader("Accept-Language", "en-GB,en;q=0.5")
-                .addHeader("Connection", "keep-alive")
-                .addHeader("Referer", "https://chapmanganelo.com/")
-                .addHeader("Sec-Fetch-Dest", "image")
-                .addHeader("Sec-Fetch-Mode", "no-cors")
-                .addHeader("Sec-Fetch-Site", "cross-site")
-                .addHeader("Priority", "u=5, i")
-                .addHeader("Pragma", "no-cache")
-                .addHeader("Cache-Control", "no-cache")
-                .build()
-        )
+    // Load image with Ktor
+    LaunchedEffect(imageManga.imgLink) {
+        isLoading.value = true
+        hasError.value = false
+        bitmap.value = null
+
+        try {
+            delay(100) // Small delay to avoid rapid requests
+
+            val response: HttpResponse = httpClient.get(imageManga.imgLink)
+
+            if (response.status.isSuccess()) {
+                val imageBytes = response.body<ByteArray>()
+                val loadedBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+
+                if (loadedBitmap != null) {
+                    bitmap.value = loadedBitmap
+                    isLoading.value = false
+                } else {
+                    hasError.value = true
+                    isLoading.value = false
+                    Log.e("ImageViewer", "Failed to decode bitmap from: ${imageManga.imgLink}")
+                }
+            } else {
+                hasError.value = true
+                isLoading.value = false
+                Log.e("ImageViewer", "HTTP error ${response.status.value} for: ${imageManga.imgLink}")
+            }
+        } catch (e: Exception) {
+            hasError.value = true
+            isLoading.value = false
+            Log.e("ImageViewer", "Error loading image: ${imageManga.imgLink}", e)
+        }
     }
 
     Box(
@@ -197,36 +248,50 @@ fun DisplayImage(
     ) {
         Log.d("ImageViewer", "Loading image: ${imageManga.imgLink}")
 
-        GlideImage(
-            model = glideUrl,
-            contentDescription = imageManga.imgTitle,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            contentScale = ContentScale.FillBounds,
-            /*loading = {
-                // Optional loading placeholder
+        when {
+            isLoading.value -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
                 }
-            },
-            failure = {
-                // Optional error placeholder
-                Log.e("ImageViewer", "Image failed to load: ${imageManga.imgLink}")
+            }
+            hasError.value -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Failed to load image")
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Failed to load image",
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(
+                            onClick = {
+                                // Retry loading
+                                isLoading.value = true
+                                hasError.value = false
+                            }
+                        ) {
+                            Text("Retry")
+                        }
+                    }
                 }
-            }*/
-        ) { requestBuilder ->
-            requestBuilder
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .timeout(30000) // 30 second timeout
+            }
+            bitmap != null -> {
+                Image(
+                    bitmap = bitmap.value?.asImageBitmap() ?: ImageBitmap(1, 1) ,
+                    contentDescription = imageManga.imgTitle,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    contentScale = ContentScale.FillBounds
+                )
+            }
         }
     }
 }
