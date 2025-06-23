@@ -10,7 +10,7 @@
   <h3 align="center">Yomu App</h3>
 
   <p align="center">
-     A Self Hosted Manga Reader in development
+     A Manga Reader in Development
     <br />
   <!--  <a href=""><strong>Explore the docs »</strong></a>
     <br />
