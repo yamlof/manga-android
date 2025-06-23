@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="app/src/main/res/mipmap-hdpi/ic_launcher.webp" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Yomu App</h3>
