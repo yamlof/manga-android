@@ -3,22 +3,10 @@ package com.example.greetingcard.sources.manganelo
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.greetingcard.database.Manga
 import com.example.greetingcard.models.LatestManga
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import retrofit2.http.Query
 import com.example.greetingcard.requests.RetrofitClient
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+
 
 
 class MainSearchModel: ViewModel() {

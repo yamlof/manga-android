@@ -1,14 +1,8 @@
 package com.example.greetingcard.sources.manganelo
 
-
 import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,62 +17,49 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.request.ImageRequest
 import com.example.greetingcard.models.ImageManga
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
-import com.example.greetingcard.requests.RetrofitClient
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.zIndex
 import coil3.Bitmap
-import coil3.ImageLoader
-import coil3.compose.AsyncImage
-import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.LazyHeaders
+import com.example.greetingcard.requests.RetrofitClient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -90,23 +71,9 @@ import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.delay
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Response
 import java.net.URLDecoder
 import java.security.cert.X509Certificate
-import java.util.concurrent.TimeUnit
 import javax.net.ssl.X509TrustManager
-
-class RequestHeaderInterceptor : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val newRequest = chain.request().newBuilder()
-            .addHeader("User-Agent", "Mozilla/5.0")
-            .addHeader("Referer", "https://chapmanganelo.com/")
-            .build()
-        return chain.proceed(newRequest)
-    }
-}
 
 enum class ReadingMode {
     HORIZONTAL_PAGER,
@@ -133,7 +100,6 @@ fun DisplayImage(
     onImageClick: () -> Unit = {},
     onImageDoubleTap: () -> Unit = {}
 ) {
-    val context = LocalContext.current
     val zoomState = rememberZoomState()
     var bitmap = remember { mutableStateOf<Bitmap?>(null) }
     var isLoading = remember { mutableStateOf(true) }
@@ -149,7 +115,6 @@ fun DisplayImage(
         )
     }
 
-    // Create Ktor HTTP client
     val httpClient = remember {
         HttpClient(CIO) {
             install(HttpTimeout) {
@@ -191,14 +156,13 @@ fun DisplayImage(
         }
     }
 
-    // Load image with Ktor
     LaunchedEffect(imageManga.imgLink) {
         isLoading.value = true
         hasError.value = false
         bitmap.value = null
 
         try {
-            delay(100) // Small delay to avoid rapid requests
+            delay(100)
 
             val response: HttpResponse = httpClient.get(imageManga.imgLink)
 
@@ -272,7 +236,6 @@ fun DisplayImage(
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(
                             onClick = {
-                                // Retry loading
                                 isLoading.value = true
                                 hasError.value = false
                             }
@@ -283,171 +246,21 @@ fun DisplayImage(
                 }
             }
             bitmap != null -> {
-                Image(
-                    bitmap = bitmap.value?.asImageBitmap() ?: ImageBitmap(1, 1) ,
-                    contentDescription = imageManga.imgTitle,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    contentScale = ContentScale.FillBounds
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AnimatedReaderTopBar(
-    visible: Boolean,
-    currentPage: Int,
-    totalPages: Int,
-    chapterTitle: String,
-    onBackClick: () -> Unit,
-    onSettingsClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val density = LocalDensity.current
-
-    AnimatedVisibility(
-        visible = visible,
-        enter = slideInVertically {
-            with(density) { -60.dp.roundToPx() }
-        } + fadeIn(animationSpec = tween(300)),
-        exit = slideOutVertically {
-            with(density) { -60.dp.roundToPx() }
-        } + fadeOut(animationSpec = tween(300))
-    ) {
-        Surface(
-            modifier = modifier.fillMaxWidth(),
-            color = Color.Black.copy(alpha = 0.8f)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
+                Box(
+                    modifier = modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ){
+                    Image(
+                        bitmap = bitmap.value?.asImageBitmap() ?: ImageBitmap(1, 1) ,
+                        contentDescription = imageManga.imgTitle,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        contentScale = ContentScale.Fit
                     )
                 }
 
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = chapterTitle,
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        maxLines = 1
-                    )
-                    Text(
-                        text = "Page $currentPage of $totalPages",
-                        color = Color.Gray,
-                        fontSize = 12.sp
-                    )
-                }
-
-                IconButton(onClick = onSettingsClick) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings",
-                        tint = Color.White
-                    )
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ReaderBottomBar(
-    visible: Boolean,
-    currentPage: Int,
-    totalPages: Int,
-    onPageChange: (Int) -> Unit,
-    onPreviousPage: () -> Unit,
-    onNextPage: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val density = LocalDensity.current
-
-    AnimatedVisibility(
-        visible = visible,
-        enter = slideInVertically {
-            with(density) { 60.dp.roundToPx() }
-        } + fadeIn(animationSpec = tween(300)),
-        exit = slideOutVertically {
-            with(density) { 60.dp.roundToPx() }
-        } + fadeOut(animationSpec = tween(300))
-    ) {
-        Surface(
-            modifier = modifier.fillMaxWidth(),
-            color = Color.Black.copy(alpha = 0.8f)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                // Page slider
-                Slider(
-                    value = currentPage.toFloat(),
-                    onValueChange = { onPageChange(it.toInt()) },
-                    valueRange = 1f..totalPages.toFloat(),
-                    steps = totalPages - 2,
-                    colors = SliderDefaults.colors(
-                        thumbColor = MaterialTheme.colorScheme.primary,
-                        activeTrackColor = MaterialTheme.colorScheme.primary,
-                        inactiveTrackColor = Color.Gray
-                    )
-                )
-
-                // Navigation buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = onPreviousPage,
-                        enabled = currentPage > 1,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Previous"
-                        )
-                        Text("Previous")
-                    }
-
-                    Text(
-                        text = "$currentPage / $totalPages",
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-
-                    Button(
-                        onClick = onNextPage,
-                        enabled = currentPage < totalPages,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
-                        )
-                    ) {
-                        Text("Next")
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Next"
-                        )
-                    }
-                }
             }
         }
     }
@@ -459,7 +272,9 @@ fun EnhancedImageViewer(
     modifier: Modifier = Modifier,
     imgManga: List<ImageManga>,
     settings: ReaderSettings,
-    onPageChange: (Int) -> Unit = {}
+    onPageChange: (Int) -> Unit = {},
+    onImageClick: () -> Unit = {},
+    onImageDoubleTap: () -> Unit = {}
 
 ) {
     when (settings.readingMode) {
@@ -477,8 +292,8 @@ fun EnhancedImageViewer(
                 DisplayImage(
                     imageManga = imgManga[page],
                     settings = settings,
-                    onImageClick = { /* Handle click */ },
-                    onImageDoubleTap = { /* Handle double tap */ }
+                    onImageClick = onImageClick,
+                    onImageDoubleTap = onImageDoubleTap
                 )
             }
         }
@@ -516,7 +331,7 @@ fun EnhancedImageViewer(
                     DisplayImage(
                         imageManga = imgManga[index],
                         settings = settings.copy(zoomEnabled = false),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillParentMaxSize()
                     )
                 }
             }
@@ -524,41 +339,30 @@ fun EnhancedImageViewer(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
+@OptIn(ExperimentalCoilApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ChapterReader(
     modifier: Modifier = Modifier,
-    chapterTitle: String = "Chapter",
+    chapterTitle: String = "title",
     chapterUrl : String,
     navController: NavController
 ){
 
-
-    //val decodedChapterUrl = Uri.decode(chapterUrl)
-
     val fetchedItem  = remember { mutableStateOf<List<ImageManga>>(emptyList()) }
-
-    //val isLoading = remember { mutableStateOf(true) }
-
     var isUIVisible = remember { mutableStateOf(false) }
     var currentPage = remember { mutableIntStateOf(1) }
     var settings = remember { mutableStateOf(ReaderSettings()) }
     var showSettings = remember { mutableStateOf(false) }
-
     val decodedChapterUrl = URLDecoder.decode(chapterUrl, "UTF-8")
     var fetchedImages = remember { mutableStateOf<List<ImageManga>>(emptyList()) }
     var isLoading = remember { mutableStateOf(true) }
     var errorMessage = remember { mutableStateOf<String?>(null) }
 
-
-
-
-
     LaunchedEffect(Unit) {
         try {
             val fetchedItems = RetrofitClient.apiService.getChapterInfo(decodedChapterUrl)
             fetchedItem.value = fetchedItems
-            fetchedImages.value = fetchedItems // 🔥 this was missing
+            fetchedImages.value = fetchedItems
             isLoading.value = false
             Log.d("MangaNelo", "Fetched items: $fetchedItems")
         } catch (e: Exception) {
@@ -630,38 +434,47 @@ fun ChapterReader(
             }
 
             fetchedItem.value.isNotEmpty() -> {
-                // Main content
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clickable { isUIVisible.value = !isUIVisible.value }
-                    ) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     EnhancedImageViewer(
                         imgManga = fetchedImages.value,
                         settings = settings.value,
-                        onPageChange = { page -> currentPage.intValue = page }
+                        onPageChange = { page -> currentPage.intValue = page },
+                        onImageClick = { isUIVisible.value = !isUIVisible.value },
+                        onImageDoubleTap = {
+                            // Handle double tap to zoom functionality
+                            // This would typically trigger zoom in the DisplayImage component
+                        },
+                        modifier = Modifier.fillMaxSize()
                     )
 
-                    // Top bar
-                    AnimatedReaderTopBar(
-                        visible = isUIVisible.value,
-                        currentPage = currentPage.intValue,
-                        totalPages = fetchedImages.value.size,
-                        chapterTitle = chapterTitle,
-                        onBackClick = { navController.popBackStack() },
-                        onSettingsClick = { showSettings.value = true }
-                    )
-
-                    // Bottom bar
-                    Box(modifier = Modifier.align(Alignment.BottomCenter)) {
-                        ReaderBottomBar(
-                            visible = isUIVisible.value,
-                            currentPage = currentPage.intValue,
-                            totalPages = fetchedImages.value.size,
-                            onPageChange = { /* Handle page change */ },
-                            onPreviousPage = { /* Handle previous */ },
-                            onNextPage = { /* Handle next */ }
+                    if (isUIVisible.value) {
+                        TopAppBar(
+                            title = {
+                                Text(text = "Back")
+                            },
+                            navigationIcon = {
+                                IconButton(onClick = {navController.popBackStack()}) {
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowBack,
+                                        contentDescription = "Back"
+                                    )
+                                }
+                            },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                                navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                            )
                         )
+                        BottomAppBar(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .zIndex(1f)
+                        ) {
+                            Text("Page ${currentPage.intValue}", modifier = Modifier.padding(16.dp))
+                        }
                     }
                 }
             }

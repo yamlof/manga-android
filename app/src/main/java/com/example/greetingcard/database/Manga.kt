@@ -28,10 +28,8 @@ interface MangaDao {
     @Update
     suspend fun update(manga: Manga)
 
-    @Delete
-    suspend fun delete(manga: Manga)
-
-
+    @Query("DELETE FROM mangas WHERE name = :name")
+    suspend fun delete(name: String)
 
     @Query("SELECT * FROM mangas")
     fun getAllMangas() : Flow<List<Manga>>

@@ -1,8 +1,9 @@
-package com.example.greetingcard
+    package com.example.greetingcard
 
-import android.app.Notification
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -13,73 +14,151 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.greetingcard.database.MangaViewModel
 import com.example.greetingcard.pages.HomePage
+import com.example.greetingcard.pages.MySettingsScreen
 import com.example.greetingcard.pages.NotificationPage
-import com.example.greetingcard.pages.SettingsPage
+import com.example.greetingcard.sources.manganelo.ChapterReader
+import com.example.greetingcard.sources.manganelo.ItemDetail
+import com.example.greetingcard.sources.manganelo.MangaNelo
 
+
+    @SuppressLint("RememberReturnType")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(modifier: Modifier = Modifier,mangaViewModel: MangaViewModel) {
+    fun MainScreen(modifier: Modifier = Modifier, mangaViewModel: MangaViewModel) {
 
-    val navItemList = listOf(
-        NavItem("Home", Icons.Default.Home,0),
-        NavItem("Notification", Icons.Default.Notifications,5),
-        NavItem("Settings", Icons.Default.Settings,0),
-    )
+        val navController = rememberNavController()
 
-    var selectedIndex by remember {
-        mutableIntStateOf(0)
-    }
+        val navItemList = listOf(
+            NavItem("Home", Icons.Default.Home, "home", badgeCount = 0),
+            NavItem("Sources", Icons.Default.Notifications, "notifications", badgeCount = 0),
+            NavItem("Settings", Icons.Default.Settings, route =  "settings", badgeCount = 0)
+        )
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = {
-            NavigationBar {
-                navItemList.forEachIndexed {index, navItem ->
-                    NavigationBarItem(
-                        selected = selectedIndex == index,
-                        onClick = {
-                            selectedIndex = index
-                        },
-                        icon = {
-                                BadgedBox(badge =  {
-                                    if(navItem.badgeCount>0)
-                                        Badge(){
-                                            Text(text = navItem.badgeCount.toString() )
-                                        }
-                                    }) {
-                                    Icon(imageVector = navItem.icon, contentDescription = "Icon")
+        val currentDestination = navController
+            .currentBackStackEntryAsState().value?.destination?.route
+
+        val showBottomBar = navItemList.any { it.route == currentDestination }
+
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            bottomBar =  {
+                    if (showBottomBar) {
+                        BottomNavBar(
+                            navItems = navItemList,
+                            currentRoute = currentDestination,
+                            onItemSelected = { route ->
+                                navController.navigate(route) {
+                                    launchSingleTop = true
+                                    restoreState = true
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
                                 }
-                        },
-                        label = {
-                            Text(text = navItem.label)
-                        }
-                    )
+                            }
+                        )
+                }
+            }
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = "home",
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable("home") { HomePage(navController = navController,mangaViewModel = mangaViewModel) }
+                composable("notifications") { NotificationPage(navController = navController) }
+                composable("settings") { MySettingsScreen() }
+
+                composable("itemDetail/{manga_url}"){ navBackStackEntry ->
+                    val itemName = navBackStackEntry.arguments?.getString("manga_url")
+                    if (itemName != null) {
+                        ItemDetail(mangaJson = itemName, navController = navController, viewModel = mangaViewModel)
+                    }
+                }
+
+                composable("chapter/{chapterUrl}") { navBackStackEntry ->
+                    val chapterName = navBackStackEntry.arguments?.getString("chapterUrl")
+                    if (chapterName != null) {
+                        ChapterReader(chapterUrl = chapterName, navController = navController)
+                    }
+                }
+                composable("detail/{source}") { navBackStackEntry ->
+                    val source = navBackStackEntry.arguments?.getString("source")
+                    MangaNelo(navController =navController)
+                }
+
+                composable("itemDetail/{manga_url}"){ navBackStackEntry ->
+                    val itemName = navBackStackEntry.arguments?.getString("manga_url")
+                    if (itemName != null) {
+                        ItemDetail(mangaJson = itemName, navController = navController, viewModel = mangaViewModel)
+                    }
+                }
+
+                composable("chapter/{chapterUrl}") { navBackStackEntry ->
+                    val chapterName = navBackStackEntry.arguments?.getString("chapterUrl")
+                    if (chapterName != null) {
+                        ChapterReader(chapterUrl = chapterName, navController = navController)
+                    }
                 }
             }
         }
-    ) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding),selectedIndex, mangaViewModel = mangaViewModel)
-
     }
-    
-}
 
-
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun ContentScreen(modifier: Modifier = Modifier,selectedIndex:Int,mangaViewModel: MangaViewModel) {
-    when(selectedIndex){
-
-        0 -> HomePage(mangaViewModel = mangaViewModel)
-        1 -> NotificationPage()
-        2 -> SettingsPage()
+    @Composable
+    fun BaseScaffold(
+        showBottomBar: Boolean,
+        navItems: List<NavItem>,
+        currentRoute: String?,
+        onItemSelected: (String) -> Unit,
+        content: @Composable (PaddingValues) -> Unit
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            bottomBar = if (showBottomBar) {
+                {
+                    BottomNavBar(
+                        navItems = navItems,
+                        currentRoute = currentRoute,
+                        onItemSelected = onItemSelected
+                    )
+                }
+            } else {
+                {} // 👈 empty lambda instead of null to avoid space reservation
+            },
+            content = content
+        )
     }
-}
+
+    @Composable
+
+    fun BottomNavBar(
+        navItems: List<NavItem>,
+        currentRoute: String?,
+        onItemSelected: (String) -> Unit
+    ) {
+        NavigationBar {
+            navItems.forEach { navItem ->
+                NavigationBarItem(
+                    selected = currentRoute == navItem.route,
+                    onClick = { onItemSelected(navItem.route) },
+                    icon = {
+                        BadgedBox(badge = {
+                            if (navItem.badgeCount > 0) {
+                                Badge {
+                                    Text(navItem.badgeCount.toString())
+                                }
+                            }
+                        }) {
+                            Icon(imageVector = navItem.icon, contentDescription = navItem.label)
+                        }
+                    },
+                    label = { Text(text = navItem.label) }
+                )
+            }
+        }
+    }

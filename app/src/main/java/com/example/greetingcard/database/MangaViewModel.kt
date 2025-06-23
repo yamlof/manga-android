@@ -1,6 +1,7 @@
 package com.example.greetingcard.database
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,14 +9,19 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import okhttp3.Dispatcher
+import javax.inject.Inject
 
-class MangaViewModel(application: Application,private val mangaRepository: MangaRepository) : AndroidViewModel(application) {
+@HiltViewModel
+class MangaViewModel @Inject constructor(
+    application: Application,
+    private val mangaRepository: MangaRepository
+) : AndroidViewModel(application) {
 
     val allMangas: MutableLiveData<List<Manga>> = MutableLiveData()
+    val _allMangas: LiveData<List<Manga>> = allMangas
 
     init {
         loadAllMangas()
@@ -23,7 +29,9 @@ class MangaViewModel(application: Application,private val mangaRepository: Manga
 
     private fun loadAllMangas() {
         viewModelScope.launch {
-            allMangas.postValue(mangaRepository.getAllMangas().first())
+            mangaRepository.getAllMangas().collect { mangas ->
+                allMangas.postValue(mangas)
+            }
         }
     }
 
@@ -51,12 +59,21 @@ class MangaViewModel(application: Application,private val mangaRepository: Manga
         }
     }
 
-    fun deleteManga(manga: Manga) {
+    fun isInLibrary(manga: Manga): Boolean {
+        return allMangas.value?.any { it.name == manga.name } == true
+    }
+
+
+
+    fun deleteManga(name: String) {
+        Log.d("MangaVM", "Deleting manga: $name")
         viewModelScope.launch {
-            mangaRepository.deleteManga(manga)
+            mangaRepository.deleteManga(name)
         }
     }
 }
+
+
 
 class MangaViewModelFactory(private val mangaRepository: MangaRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

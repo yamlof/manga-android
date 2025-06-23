@@ -17,14 +17,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -45,6 +48,8 @@ import com.example.greetingcard.models.Chapter
 import com.example.greetingcard.models.LatestManga
 import com.example.greetingcard.pages.ImageCard
 import com.example.greetingcard.requests.RetrofitClient
+
+
 
 
 @OptIn(ExperimentalCoilApi::class)
@@ -68,14 +73,43 @@ fun ItemDetail(
         val fetchedAuthor = remember { mutableStateOf<String?>(null) }
         val fetchedChapters = remember {mutableStateOf<List<Chapter>>(emptyList()) }
 
-        LaunchedEffect(Unit) {
-            val fetchedItems = RetrofitClient.apiService.getMangaInfo(mangaJson)
-            Log.d("MangaNelo", "Fetched items: $itemsList")  //
-            fetcheditem.value = fetchedItems.cover
-            fetchedTitle.value = fetchedItems.title
-            fetchedAuthor.value = fetchedItems.author
-            fetchedStatus.value = fetchedItems.status
-            fetchedChapters.value = fetchedItems.chapters
+        var showErrorDialog = remember { mutableStateOf(false) }
+        var retryTrigger = remember { mutableStateOf(0) }
+
+
+        LaunchedEffect(retryTrigger) {
+            try {
+                val fetchedItems = RetrofitClient.apiService.getMangaInfo(mangaJson)
+                Log.d("MangaNelo", "Fetched items: $itemsList")  //
+                fetcheditem.value = fetchedItems.cover
+                fetchedTitle.value = fetchedItems.title
+                fetchedAuthor.value = fetchedItems.author
+                fetchedStatus.value = fetchedItems.status
+                fetchedChapters.value = fetchedItems.chapters
+            } catch (e: Exception) {
+                showErrorDialog.value = true
+            }
+
+        }
+
+        if (showErrorDialog.value) {
+            AlertDialog(
+                onDismissRequest = {showErrorDialog.value=false},
+                confirmButton = {
+                    TextButton(onClick = {
+                        retryTrigger.value++ // Triggers fetch again
+                    }) {
+                        Text("Retry")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showErrorDialog.value = false }) {
+                        Text("Cancel")
+                    }
+                },
+                title = { Text("Error") },
+                text = { Text("Failed to load manga info.This might be because the server is asleep.Try again in 60 seconds") }
+            )
         }
 
         OutlinedCard(
@@ -84,7 +118,7 @@ fun ItemDetail(
             ),
             border = BorderStroke(1.dp, Color.Black),
             modifier = Modifier
-                .height( height = 280.dp)
+                .height(height = 280.dp)
                 .fillMaxWidth()
                 .padding(top = 25.dp),
             shape = RectangleShape
@@ -124,46 +158,60 @@ fun ItemDetail(
                     onClick = {}
                 )
 
-                Column (
+                Column(
                     modifier = Modifier
                         .background(Color.White)
                         .fillMaxHeight()
+                        .fillMaxWidth() // Ensure the column takes the full width
                         .padding(start = 0.dp),
-
-                    horizontalAlignment = Alignment.Start,
+                    horizontalAlignment = Alignment.CenterHorizontally, // Center items horizontally
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = fetchedTitle.value ?: "Loading title...",
+                        modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         color = Color.Black
                     )
                     Text(
-                        text = fetchedAuthor.value ?: "Loading title...",
-                        textAlign = TextAlign.End,
+                        text = fetchedAuthor.value ?: "Loading author...",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
                         color = Color.Black
                     )
                     Text(
-                        text = fetchedStatus.value ?: "Loading title...",
-                        textAlign = TextAlign.End,
+                        text = fetchedStatus.value ?: "Loading status...",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
                         color = Color.Black
                     )
 
                     val newManga = Manga(
-                        name =fetchedTitle.value ?: "Not Found Yet",
+                        name = fetchedTitle.value ?: "Not Found Yet",
                         cover = cover ?: "Not Found Yet",
                         mangaUrl = mangaJson
                     )
+
+                    val library = viewModel.allMangas.observeAsState()
+                    val isInLibrary = library.value?.any { it.name == newManga.name } == true
+
                     ElevatedButton(
                         onClick = {
-                            viewModel.addManga(newManga)
+                            val storedManga = library.value?.find { it.name == newManga.name }
+                            if (isInLibrary) {
+                                if (storedManga != null) {
+                                    viewModel.deleteManga(storedManga.name)
+                                }
+                            } else {
+                                viewModel.addManga(newManga)
+                            }
                         },
-                        modifier = Modifier
-                            .padding(top = 25.dp)
+                        modifier = Modifier.padding(top = 25.dp)
                     ) {
                         Text(
-                            "Add to Library",
-                            textAlign = TextAlign.End)
+                            if (isInLibrary) "Remove from Library" else "Add to Library",
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
 

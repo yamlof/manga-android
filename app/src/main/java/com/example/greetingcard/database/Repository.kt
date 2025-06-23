@@ -1,10 +1,13 @@
 package com.example.greetingcard.database
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MangaRepository(private val mangaDao: MangaDao) {
+@Singleton
+class MangaRepository @Inject constructor(
+    private val mangaDao: MangaDao
+) {
 
     suspend fun insertManga(manga: Manga) {
         mangaDao.insertManga(manga)
@@ -14,8 +17,8 @@ class MangaRepository(private val mangaDao: MangaDao) {
         mangaDao.update(manga)
     }
 
-    suspend fun deleteManga(manga: Manga) {
-        mangaDao.delete(manga)
+    suspend fun deleteManga(name: String) {
+        mangaDao.delete(name)
     }
 
     /*suspend fun getMangasByStatus(status: String): List<Manga> {

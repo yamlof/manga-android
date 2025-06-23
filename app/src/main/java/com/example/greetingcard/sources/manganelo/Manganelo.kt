@@ -105,7 +105,7 @@ fun MangaNelo(
             modifier = Modifier
                 .background(color = Color.White)
                 .fillMaxWidth()
-                .padding(25.dp),
+                .padding(  25.dp),
             Arrangement.Center
         ){
             Column(
@@ -117,7 +117,7 @@ fun MangaNelo(
                         modifier = Modifier
                             .padding(top = 40.dp)
                             ,
-                        text = "MangaNelo"
+                        text = "Mangabat"
                     )
 
                     StyledTextField(viewModel)
